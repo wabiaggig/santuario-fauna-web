@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santuario Río Verde | Fauna Silvestre</title>
+    <!-- Script de Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#f4faec',
+                            DEFAULT: '#3a7ca5',
+                            dark: '#2a5a78',
+                            leaf: '#4a7c59'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-brand-light font-sans text-gray-800 antialiased selection:bg-brand-leaf selection:text-white">
+
+    <!-- Navegación (Navbar) -->
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <svg class="w-8 h-8 text-brand-leaf" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Santuario <span class="text-brand-leaf">Río Verde</span></span>
+                </div>
+                
+                <!-- Enlaces -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-brand-leaf transition font-medium">Inicio</a>
+                    <a href="#nosotros" class="text-gray-600 hover:text-brand-leaf transition font-medium">Nosotros</a>
+                    <a href="#campanas" class="text-gray-600 hover:text-brand-leaf transition font-medium">Campañas</a>
+                    <a href="#apadrina" class="text-gray-600 hover:text-brand-leaf transition font-medium">Apadrina</a>
+                </div>
+
+                <!-- Botón de Inicio de Sesión -->
+                <div>
+                    <a th:href="@{/login}" class="inline-flex items-center justify-center px-6 py-2.5 border border-transparent rounded-full shadow-sm text-sm font-medium text-brand-leaf bg-brand-leaf/10 hover:bg-brand-leaf hover:text-white transition-all duration-300">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                        Iniciar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sección Hero Integrada (Pantalla Completa + Estadísticas al fondo) -->
+    <div class="relative bg-gray-900 min-h-screen flex flex-col justify-between overflow-hidden">
+        <!-- Imagen de fondo local -->
+        <div class="absolute inset-0">
+            <img src="/images/hero-bg.jpg" alt="Fauna Silvestre" class="w-full h-full object-cover opacity-40">
+        </div>
+        
+		<!-- Sección Hero Integrada -->
+		<div class="relative bg-gray-900 min-h-screen flex flex-col justify-center overflow-hidden">
+		    <!-- Imagen de fondo local -->
+		    <div class="absolute inset-0">
+		        <img src="/images/hero-bg.jpg" alt="Fauna Silvestre" class="w-full h-full object-cover opacity-40">
+		    </div>
+		    
+		    <!-- Contenido Central del Hero -->
+		    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-10">
+		        <span class="text-brand-light font-semibold tracking-wider uppercase text-sm mb-3 block">Madre de Dios, Perú</span>
+		        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+		            +500 Animales <br> <span class="text-brand-leaf">Rescatados</span>
+		        </h1>
+		        <p class="mt-4 text-xl text-gray-200 mb-10 font-light max-w-2xl mx-auto">
+		            Protegemos, rehabilitamos y brindamos un hogar seguro a la fauna silvestre víctima del tráfico ilegal. Tu ayuda lo hace posible.
+		        </p>
+
+		        <!-- Bloque de Estadísticas incrustado en el centro -->
+		        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white mb-10 bg-black/30 backdrop-blur-md rounded-2xl p-6 border border-white/10 mx-auto max-w-3xl shadow-lg">
+		            <div>
+		                <p class="text-3xl font-bold text-brand-leaf">500+</p>
+		                <p class="text-gray-300 mt-1 text-xs uppercase tracking-wider">Rescatados</p>
+		            </div>
+		            <div>
+		                <p class="text-3xl font-bold text-brand-leaf">120</p>
+		                <p class="text-gray-300 mt-1 text-xs uppercase tracking-wider">Rehabilitados</p>
+		            </div>
+		            <div>
+		                <p class="text-3xl font-bold text-brand-leaf">45</p>
+		                <p class="text-gray-300 mt-1 text-xs uppercase tracking-wider">Especies</p>
+		            </div>
+		            <div>
+		                <p class="text-3xl font-bold text-brand-leaf">3</p>
+		                <p class="text-gray-300 mt-1 text-xs uppercase tracking-wider">Zonas</p>
+		            </div>
+		        </div>
+
+		        <!-- Botones de Acción -->
+		        <div class="flex flex-wrap gap-4 justify-center">
+		            <a href="#apadrina" class="px-8 py-4 bg-brand-leaf text-white rounded-full font-semibold hover:bg-green-700 transition shadow-lg">
+		                Apadrinar ahora
+		            </a>
+		            <a href="#nosotros" class="px-8 py-4 bg-white/10 backdrop-blur text-white border border-white/20 rounded-full font-semibold hover:bg-white/20 transition">
+		                Conoce más
+		            </a>
+		        </div>
+		    </div>
+		</div>
+
+    <!-- 1. APARTADO: NOSOTROS (Pantalla completa) -->
+    <section id="nosotros" class="min-h-screen flex flex-col justify-center py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Sobre Nosotros</h2>
+                <p class="text-gray-600 font-light">Conoce quiénes somos y cuál es nuestra misión en la conservación de la biodiversidad de nuestra región.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-brand-light p-8 rounded-2xl border border-gray-100">
+                    <div class="w-12 h-12 bg-brand-leaf/20 text-brand-leaf rounded-xl flex items-center justify-center font-bold text-xl mb-6">01</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Nuestra Misión</h3>
+                    <p class="text-gray-600 font-light text-sm">Rescatar, rehabilitar y reinsertar a la fauna silvestre afectada por el tráfico ilegal, garantizando su bienestar clínico y un hábitat adecuado.</p>
+                </div>
+                <div class="bg-brand-light p-8 rounded-2xl border border-gray-100">
+                    <div class="w-12 h-12 bg-brand-leaf/20 text-brand-leaf rounded-xl flex items-center justify-center font-bold text-xl mb-6">02</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Nuestra Visión</h3>
+                    <p class="text-gray-600 font-light text-sm">Ser el santuario líder en la Amazonía en la gestión tecnológica de historias clínicas de fauna y educación ambiental comunitaria.</p>
+                </div>
+                <div class="bg-brand-light p-8 rounded-2xl border border-gray-100">
+                    <div class="w-12 h-12 bg-brand-leaf/20 text-brand-leaf rounded-xl flex items-center justify-center font-bold text-xl mb-6">03</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Compromiso Ecológico</h3>
+                    <p class="text-gray-600 font-light text-sm">Trabajamos bajo estrictos estándares de conservación y trazabilidad médica para asegurar que cada especie vuelva a su hogar natural.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. APARTADO: CAMPAÑAS (Pantalla completa) -->
+    <section id="campanas" class="min-h-screen flex flex-col justify-center py-20 bg-brand-light">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Campañas Actuales</h2>
+                <p class="text-gray-600 font-light">Proyectos activos donde tu apoyo directo se convierte en salud y refugio para los animales.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row">
+                <div class="md:w-1/2 bg-gray-200 relative min-h-[300px]">
+                    <img src="/images/campana-aviario.jpg" alt="Guacamayo" class="absolute inset-0 w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        Campaña Especial
+                    </div>
+                </div>
+
+                <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">Nuestro sueño: <br>Un aviario de rehabilitación</h3>
+                    <p class="text-gray-600 mb-8 font-light">
+                        Buscamos transformar nuestros recintos en una clínica de sanación para aves y reptiles. Con tu aporte, podremos construir la nueva "Unidad de cuarentena Los Cedros".
+                    </p>
+                    
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                        <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-widest mb-4">Datos para donación directa</h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                <span class="text-sm text-gray-500">Yape / Plin</span>
+                                <span class="font-mono font-medium text-gray-900">987 654 321</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                <span class="text-sm text-gray-500">Cuenta BCP (Soles)</span>
+                                <span class="font-mono font-medium text-gray-900">193-0000000-0-00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">Titular</span>
+                                <span class="text-sm font-medium text-gray-900">Santuario Río Verde ONG</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. APARTADO: APADRINA (Pantalla completa) -->
+    <section id="apadrina" class="min-h-screen flex flex-col justify-center py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
+            <div class="max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Programa de Apadrinamiento</h2>
+                <p class="text-gray-600 font-light">Conviértete en padrino o madrina de uno de nuestros animales rescatados y recibe actualizaciones constantes sobre su recuperación médica.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left mb-12">
+                <!-- Tarjeta Animal 1 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Azul" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-brand-leaf uppercase tracking-wider">Guacamayo Azul</span>
+                        <h3 class="text-xl font-bold text-gray-900 mt-1 mb-2">"Azul"</h3>
+                        <p class="text-gray-600 text-sm font-light mb-4">En proceso de recuperación de plumaje en la zona de cuarentena.</p>
+                        <span class="inline-block bg-white text-gray-800 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Aporte mensual sugerido: S/ 50</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Animal 2 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kiro" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-brand-leaf uppercase tracking-wider">Mono Capuchino</span>
+                        <h3 class="text-xl font-bold text-gray-900 mt-1 mb-2">"Kiro"</h3>
+                        <p class="text-gray-600 text-sm font-light mb-4">Bajo evaluación veterinaria y adaptación social al grupo de refugio.</p>
+                        <span class="inline-block bg-white text-gray-800 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Aporte mensual sugerido: S/ 80</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Animal 3 -->
+                <div class="bg-brand-light rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://images.unsplash.com/photo-1437622368342-9a3d7b9d4872?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Moti" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-brand-leaf uppercase tracking-wider">Tortuga Motelo</span>
+                        <h3 class="text-xl font-bold text-gray-900 mt-1 mb-2">"Moti"</h3>
+                        <p class="text-gray-600 text-sm font-light mb-4">Control de condición corporal y movilidad en hábitat de reptiles.</p>
+                        <span class="inline-block bg-white text-gray-800 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Aporte mensual sugerido: S/ 40</span>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#campanas" class="inline-block px-8 py-4 bg-brand-leaf text-white rounded-full font-semibold hover:bg-green-700 transition shadow-md">
+                Quiero Apadrinar un Animal
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">© 2026 Santuario de Fauna Silvestre Río Verde. Madre de Dios, Perú.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
