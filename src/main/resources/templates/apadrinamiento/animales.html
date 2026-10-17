@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animales para apadrinar | Santuario Río Verde</title>
+    <!-- Se replica temporalmente el Tailwind CDN utilizado en home.html. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: {
+        brand: { light: '#f4faec', leaf: '#4a7c59' }
+      }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-brand-light min-h-screen font-sans text-gray-900">
+  <header class="bg-white border-b border-gray-100">
+    <nav class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap items-center justify-between gap-3">
+      <a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+      <a th:href="@{/#apadrina}" class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7 7-7-7 7-7"/>
+        </svg>
+        <span>Volver a Apadrinamiento</span>
+      </a>
+    </nav>
+  </header>
+  <main class="max-w-7xl mx-auto px-5 py-12">
+    <div class="max-w-3xl mb-10">
+      <p class="text-brand-leaf uppercase tracking-widest font-bold text-xs mb-3">Programa de apadrinamiento</p>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">Conoce a los animales del santuario</h1>
+      <p class="text-gray-600">Explora los animales actualmente albergados y elige a cuál te gustaría apoyar. Puedes revisar el formulario mientras se integra el inicio de sesión.</p>
+    </div>
+    <div th:if="${#lists.isEmpty(animales)}" class="bg-white rounded-2xl p-8 border border-gray-200 text-gray-600">
+      Por ahora no hay animales disponibles para apadrinar.
+    </div>
+    <div th:unless="${#lists.isEmpty(animales)}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+      <article th:each="animal : ${animales}" class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm flex flex-col">
+        <div class="h-48 bg-emerald-50 flex items-center justify-center overflow-hidden">
+          <img th:if="${animal.fotoUrl != null and !#strings.isEmpty(animal.fotoUrl)}"
+               th:src="${animal.fotoUrl}" th:alt="${animal.nombre}"
+               class="h-full w-full object-cover" loading="lazy">
+          <div th:unless="${animal.fotoUrl != null and !#strings.isEmpty(animal.fotoUrl)}" class="text-center text-brand-leaf">
+            <span class="block text-5xl" aria-hidden="true">🌿</span>
+            <span class="text-sm font-semibold">Imagen próximamente</span>
+          </div>
+        </div>
+        <div class="p-6 flex-1 flex flex-col">
+          <p class="uppercase tracking-wide text-xs font-bold text-brand-leaf mb-2" th:text="${animal.especie.nombreComun}">Especie</p>
+          <h2 class="text-2xl font-bold mb-2" th:text="${animal.nombre}">Animal</h2>
+          <p class="text-gray-500 text-sm mb-5">Código: <span th:text="${animal.codigo}">SAN-000</span></p>
+          <span class="inline-flex self-start rounded-full bg-brand-light text-brand-leaf px-3 py-1 text-xs font-semibold mt-auto">En el santuario</span>
+          <a th:href="@{/apadrinamientos/nuevo/{id}(id=${animal.idAnimal})}"
+             class="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-brand-leaf px-5 py-3 text-white text-sm font-semibold hover:bg-green-700 transition">
+            Solicitar apadrinamiento
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </main>
+</body>
+</html>
