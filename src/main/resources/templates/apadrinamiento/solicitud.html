@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar apadrinamiento | Santuario Río Verde</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { light: '#f4faec', leaf: '#4a7c59' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-brand-light font-sans text-gray-900">
+  <header class="bg-white border-b border-gray-100">
+    <nav class="max-w-5xl mx-auto px-5 py-5 flex items-center justify-between gap-3">
+      <a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+      <a th:href="@{/apadrinamientos/animales}" class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7 7-7-7 7-7"/>
+        </svg>
+        Volver al catálogo
+      </a>
+    </nav>
+  </header>
+  <main class="max-w-5xl mx-auto px-5 py-12">
+    <p class="text-brand-leaf font-bold text-xs uppercase tracking-widest mb-3">Paso 2 · Solicitud de apadrinamiento</p>
+    <h1 class="text-3xl sm:text-4xl font-bold mb-4">Apoya a <span th:text="${animal.nombre}">Azul</span></h1>
+    <p class="text-gray-600 max-w-3xl mb-8">Elige el aporte mensual que deseas comprometer.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-7 items-start">
+      <section class="md:col-span-2 rounded-2xl border border-gray-100 overflow-hidden bg-white shadow-sm" aria-label="Animal seleccionado">
+        <div class="h-52 bg-emerald-50 flex items-center justify-center overflow-hidden">
+          <img th:if="${animal.fotoUrl != null and !#strings.isEmpty(animal.fotoUrl)}"
+               th:src="${animal.fotoUrl}" th:alt="${animal.nombre}"
+               class="w-full h-full object-cover">
+          <div th:unless="${animal.fotoUrl != null and !#strings.isEmpty(animal.fotoUrl)}" class="text-center text-brand-leaf">
+            <span class="text-5xl block" aria-hidden="true">🌿</span>
+            <span class="text-sm font-semibold">Imagen próximamente</span>
+          </div>
+        </div>
+        <div class="p-6">
+          <p class="text-brand-leaf text-xs uppercase tracking-wide font-bold" th:text="${animal.especie.nombreComun}">Especie</p>
+          <h2 class="font-bold text-2xl mt-2" th:text="${animal.nombre}">Animal</h2>
+          <p class="text-sm text-gray-500 mt-2">Código: <span th:text="${animal.codigo}">SAN-001</span></p>
+          <span class="inline-flex rounded-full bg-brand-light text-brand-leaf font-semibold text-xs px-3 py-1 mt-4">En el santuario</span>
+        </div>
+      </section>
+
+      <section class="md:col-span-3 bg-white border border-gray-100 rounded-2xl shadow-sm p-6 sm:p-8">
+        <h2 class="font-bold text-xl mb-2">Datos del compromiso</h2>
+        <div th:if="${error != null}" class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 text-sm" role="alert" th:text="${error}">Error</div>
+
+        <form th:action="@{/apadrinamientos/revisar/{id}(id=${animal.idAnimal})}" th:object="${solicitud}" method="post" class="space-y-5">
+          <div>
+            <label for="aporteMensual" class="block text-sm font-semibold mb-2">Aporte mensual acordado (S/) <span class="text-red-600">*</span></label>
+            <input id="aporteMensual" th:field="*{aporteMensual}" type="number" step="0.01" min="0.01" required
+                   placeholder="Ejemplo: 50.00"
+                   class="block w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-700/40 focus:border-brand-leaf">
+            <p class="text-xs text-gray-500 mt-2">El monto debe ser mayor que cero y tener como máximo dos decimales.</p>
+          </div>
+          <div>
+            <label for="observaciones" class="block text-sm font-semibold mb-2">Observaciones (opcional)</label>
+            <textarea id="observaciones" th:field="*{observaciones}" maxlength="255" rows="4"
+                      placeholder="Escribe un mensaje opcional para el santuario"
+                      class="block w-full rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-700/40 focus:border-brand-leaf"></textarea>
+          </div>
+          <button type="submit" class="w-full inline-flex items-center justify-center rounded-full bg-brand-leaf px-6 py-3 text-white font-semibold hover:bg-green-700 transition">
+            Revisar mi solicitud
+          </button>
+        </form>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

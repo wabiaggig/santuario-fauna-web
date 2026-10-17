@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisión de solicitud | Santuario Río Verde</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { light: '#f4faec', leaf: '#4a7c59' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-brand-light font-sans text-gray-900">
+  <header class="bg-white border-b border-gray-100">
+    <nav class="max-w-3xl mx-auto px-5 py-5 flex items-center justify-between gap-3">
+      <a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+      <a th:href="@{/apadrinamientos/animales}" class="text-sm text-brand-leaf font-semibold hover:underline">Volver al catálogo</a>
+    </nav>
+  </header>
+  <main class="max-w-3xl mx-auto px-5 py-12">
+    <p class="font-bold text-xs uppercase tracking-widest text-brand-leaf mb-3">Vista previa</p>
+    <h1 class="text-3xl sm:text-4xl font-bold mb-4">Revisa tu solicitud</h1>
+    <div class="rounded-2xl border border-amber-300 bg-amber-50 text-amber-900 p-5 mb-7" role="status">
+      <strong>Solicitud todavía no registrada.</strong> Estos datos solamente fueron validados para su revisión. No se guardó ningún apadrinamiento ni se generó una deuda o donación.
+    </div>
+    <section class="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 sm:p-8">
+      <dl class="space-y-5">
+        <div><dt class="text-sm text-gray-500">Animal seleccionado</dt><dd class="font-bold text-xl" th:text="${animal.nombre}">Azul</dd></div>
+        <div><dt class="text-sm text-gray-500">Especie</dt><dd class="font-semibold" th:text="${animal.especie.nombreComun}">Especie</dd></div>
+        <div><dt class="text-sm text-gray-500">Código</dt><dd class="font-semibold" th:text="${animal.codigo}">SAN-001</dd></div>
+        <div><dt class="text-sm text-gray-500">Aporte mensual propuesto</dt><dd class="text-2xl font-bold text-brand-leaf">S/ <span th:text="${#numbers.formatDecimal(solicitud.aporteMensual, 1, 2)}">50.00</span></dd></div>
+        <div th:if="${solicitud.observaciones != null and !#strings.isEmpty(solicitud.observaciones)}">
+          <dt class="text-sm text-gray-500">Observaciones</dt><dd class="whitespace-pre-wrap" th:text="${solicitud.observaciones}">Observación</dd>
+        </div>
+      </dl>
+      <a th:href="@{/apadrinamientos/nuevo/{id}(id=${animal.idAnimal})}"
+         class="mt-8 inline-flex items-center justify-center rounded-full border border-brand-leaf text-brand-leaf px-6 py-3 font-semibold hover:bg-brand-light transition">
+        Volver a editar
+      </a>
+    </section>
+    <p class="text-gray-600 mt-6 text-sm">Cuando el compañero termine el inicio de sesión, conectaremos aquí la confirmación final utilizando el padrino autenticado.</p>
+  </main>
+</body>
+</html>
