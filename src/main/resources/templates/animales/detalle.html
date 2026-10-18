@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${animal.nombre} · Ficha · Santuario Río Verde|"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <a th:href="@{/animales}">Volver a animales</a>
+    <div class="titulo-acciones"><div><h1 th:text="${animal.nombre}"></h1><p class="descripcion"><span class="codigo" th:text="${animal.codigo}"></span> · <span th:text="${animal.especie.nombreComun}"></span></p></div><a th:if="${animal.activo}" class="boton" th:href="@{/animales/{id}/editar(id=${animal.idAnimal})}">Editar ficha</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <p th:unless="${animal.activo}" class="aviso">Esta ficha está dada de baja. Se conserva para consultar sus antecedentes.</p>
+    <section class="datos-ficha" aria-labelledby="datos"><h2 id="datos">Datos del animal</h2>
+        <dl>
+            <div><dt>Nombre científico</dt><dd th:text="${animal.especie.nombreCientifico}"></dd></div>
+            <div><dt>Sexo</dt><dd th:text="${sexos[animal.sexo]}"></dd></div>
+            <div><dt>Estado</dt><dd th:text="${estados[animal.estado]}"></dd></div>
+            <div><dt>Salud</dt><dd th:text="${salud[animal.estadoSalud]}"></dd></div>
+            <div><dt>Fecha de ingreso</dt><dd th:text="${#temporals.format(animal.fechaIngreso, 'dd/MM/yyyy')}"></dd></div>
+            <div><dt>Procedencia</dt><dd th:text="${animal.procedencia}"></dd></div>
+            <div class="ancho-completo"><dt>Motivo de ingreso</dt><dd class="texto-largo" th:text="${animal.motivoIngreso}"></dd></div>
+            <div><dt>Inicio de cuarentena</dt><dd th:text="${animal.fechaInicioCuarentena == null ? 'Sin registrar' : #temporals.format(animal.fechaInicioCuarentena, 'dd/MM/yyyy')}"></dd></div>
+            <div><dt>Fin de cuarentena</dt><dd th:text="${animal.fechaFinCuarentena == null ? 'Sin registrar' : #temporals.format(animal.fechaFinCuarentena, 'dd/MM/yyyy')}"></dd></div>
+            <div><dt>Fecha de salida</dt><dd th:text="${animal.fechaSalida == null ? 'Sin salida registrada' : #temporals.format(animal.fechaSalida, 'dd/MM/yyyy')}"></dd></div>
+            <div><dt>Ficha</dt><dd th:text="${animal.activo ? 'Activa' : 'Dada de baja'}"></dd></div>
+            <div class="ancho-completo"><dt>Observaciones</dt><dd class="texto-largo" th:text="${#strings.isEmpty(animal.observaciones) ? 'Sin observaciones.' : animal.observaciones}"></dd></div>
+        </dl>
+        <p th:if="${animal.fotoUrl != null and (#strings.startsWith(animal.fotoUrl, 'https://') or #strings.startsWith(animal.fotoUrl, 'http://'))}"><a th:href="${animal.fotoUrl}" target="_blank" rel="noopener noreferrer">Abrir foto del animal (nueva pestaña)</a></p>
+    </section>
+    <section class="historial" aria-labelledby="alojamientos"><h2 id="alojamientos">Historial de alojamientos</h2>
+        <p th:if="${#lists.isEmpty(alojamientos)}">Esta ficha no tiene alojamientos registrados.</p>
+        <p th:unless="${#lists.isEmpty(alojamientos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+        <div th:unless="${#lists.isEmpty(alojamientos)}" class="tabla-scroll" role="region" aria-label="Historial de alojamientos" tabindex="0"><table>
+            <caption class="solo-lector">Zonas ocupadas por el animal, de la más reciente a la más antigua</caption>
+            <thead><tr><th scope="col">Zona</th><th scope="col">Entrada</th><th scope="col">Salida</th></tr></thead>
+            <tbody><tr th:each="alojamiento : ${alojamientos}"><td th:text="${alojamiento.zona.nombre}"></td><td class="fecha" th:text="${#temporals.format(alojamiento.fechaEntrada, 'dd/MM/yyyy HH:mm')}"></td><td class="fecha" th:text="${alojamiento.fechaSalida == null ? 'Alojamiento vigente' : #temporals.format(alojamiento.fechaSalida, 'dd/MM/yyyy HH:mm')}"></td></tr></tbody>
+        </table></div>
+    </section>
+    <section class="administracion" aria-labelledby="ficha"><h2 id="ficha">Administración de la ficha</h2>
+        <p>La baja conserva los datos y no representa una liberación ni un fallecimiento. No se permite mientras haya alojamientos o apadrinamientos abiertos.</p>
+        <a th:if="${animal.activo}" class="enlace-peligro" th:href="@{/animales/{id}/baja(id=${animal.idAnimal})}">Dar de baja la ficha</a>
+        <form th:unless="${animal.activo}" th:action="@{/animales/{id}/activar(id=${animal.idAnimal})}" method="post"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><button class="boton" type="submit">Reactivar ficha</button></form>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${idAnimal == null ? 'Registrar ingreso | Santuario Río Verde' : 'Editar ficha | Santuario Río Verde'}"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion formulario-animal">
+    <a th:href="${idAnimal == null} ? @{/animales} : @{/animales/{id}(id=${idAnimal})}">Volver sin guardar</a>
+    <h1 th:text="${idAnimal == null ? 'Registrar ingreso de un animal' : 'Editar datos de la ficha'}"></h1>
+    <p th:if="${idAnimal == null}" class="descripcion">Registra los datos del rescate y el alojamiento inicial en cuarentena. La ficha quedará albergada y con salud en evaluación.</p>
+    <p th:unless="${idAnimal == null}" class="descripcion">Actualiza los datos de identificación. El ingreso, la salud y las fechas del seguimiento se conservan.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form th:action="${idAnimal == null} ? @{/animales/guardar} : @{/animales/{id}/guardar(id=${idAnimal})}" th:object="${form}" method="post">
+        <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+        <p class="ayuda">Los campos con * son obligatorios.</p>
+        <fieldset>
+            <legend>Identificación</legend>
+            <div class="campos">
+                <div><label for="codigo">Código del expediente *</label><input id="codigo" th:field="*{codigo}" maxlength="20" required aria-describedby="ayuda-codigo"><small id="ayuda-codigo">Debe ser único. Máximo 20 caracteres.</small></div>
+                <div><label for="nombre">Nombre del animal *</label><input id="nombre" th:field="*{nombre}" maxlength="80" required></div>
+                <div><label for="idEspecie">Especie *</label><select id="idEspecie" th:field="*{idEspecie}" required>
+                    <option value="">Selecciona una especie</option>
+                    <option th:each="especie : ${especies}" th:value="${especie.idEspecie}" th:text="${especie.nombreComun}"></option>
+                </select><small th:if="${#lists.isEmpty(especies)}">No hay especies activas. Solicita su habilitación antes de registrar.</small></div>
+                <div><label for="sexo">Sexo *</label><select id="sexo" th:field="*{sexo}" required><option value="D">Desconocido</option><option value="M">Macho</option><option value="H">Hembra</option></select></div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Datos del ingreso</legend>
+            <div class="campos">
+                <div th:if="${idAnimal == null}"><label for="fechaIngreso">Fecha de ingreso *</label><input id="fechaIngreso" th:field="*{fechaIngreso}" type="date" th:max="${hoy}" required><small>Fecha real del ingreso, hasta el día de hoy.</small></div>
+                <div th:unless="${idAnimal == null}"><p class="etiqueta">Fecha de ingreso</p><p th:text="${#temporals.format(animal.fechaIngreso, 'dd/MM/yyyy')}"></p></div>
+                <div><label for="procedencia">Procedencia *</label><input id="procedencia" th:field="*{procedencia}" maxlength="150" required></div>
+                <div class="ancho-completo"><label for="motivoIngreso">Motivo de ingreso *</label><textarea id="motivoIngreso" th:field="*{motivoIngreso}" maxlength="255" rows="3" required></textarea></div>
+            </div>
+        </fieldset>
+        <fieldset th:if="${idAnimal == null}">
+            <legend>Alojamiento inicial</legend>
+            <label for="idZona">Zona de cuarentena *</label>
+            <select id="idZona" th:field="*{idZona}" required aria-describedby="ayuda-cupo">
+                <option value="">Selecciona una zona</option>
+                <option th:each="zona : ${zonas}" th:value="${zona.idZona}" th:disabled="${cupos[zona.idZona] == 0}" th:text="|${zona.nombre} · ${cupos[zona.idZona]} cupos disponibles|"></option>
+            </select>
+            <small id="ayuda-cupo">El cupo se vuelve a comprobar al guardar. Sin espacio disponible, el ingreso no se registra.</small>
+            <p th:if="${#lists.isEmpty(zonas)}" class="aviso error">No hay zonas de cuarentena activas. Coordina su habilitación o una derivación.</p>
+        </fieldset>
+        <fieldset>
+            <legend>Información adicional</legend>
+            <label for="fotoUrl">Dirección de la foto</label><input id="fotoUrl" th:field="*{fotoUrl}" type="url" maxlength="255" aria-describedby="ayuda-foto"><small id="ayuda-foto">Opcional. Enlace http o https a una imagen; no se cargan archivos.</small>
+            <label for="observaciones">Observaciones</label><textarea id="observaciones" th:field="*{observaciones}" maxlength="4000" rows="4"></textarea><small>Opcional. Hasta 4000 caracteres.</small>
+        </fieldset>
+        <div class="pie-formulario"><button class="boton" type="submit" th:text="${idAnimal == null ? 'Guardar ingreso y alojamiento' : 'Guardar cambios'}"></button><a th:href="${idAnimal == null} ? @{/animales} : @{/animales/{id}(id=${idAnimal})}">Cancelar</a></div>
+    </form>
+</main>
+</body>
+</html>

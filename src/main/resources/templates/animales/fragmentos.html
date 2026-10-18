@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="cabecera" th:fragment="cabecera">
+    <a class="marca" th:href="@{/}">Santuario <span>Río Verde</span></a>
+    <nav aria-label="Navegación del cuidador">
+        <a th:href="@{/panel}">Mi espacio</a>
+        <a th:href="@{/animales}">Animales</a>
+        <form th:action="@{/cerrar-sesion}" method="post">
+            <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+            <button class="enlace-boton" type="submit">Cerrar sesión</button>
+        </form>
+    </nav>
+</header>
+<div th:fragment="avisos">
+    <p th:if="${mensaje}" class="aviso exito" role="status" th:text="${mensaje}"></p>
+    <p th:if="${error}" class="aviso error" role="alert" th:text="${error}"></p>
+</div>
+</body>
+</html>

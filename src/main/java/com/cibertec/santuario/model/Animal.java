@@ -1,5 +1,7 @@
 package com.cibertec.santuario.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,6 +38,19 @@ public class Animal {
     @JoinColumn(name = "id_especie", nullable = false)
     private Especie especie;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "sexo", nullable = false, length = 1)
+    private String sexo;
+
+    @Column(name = "fecha_ingreso", nullable = false)
+    private LocalDate fechaIngreso;
+
+    @Column(name = "procedencia", nullable = false, length = 150)
+    private String procedencia;
+
+    @Column(name = "motivo_ingreso", nullable = false, length = 255)
+    private String motivoIngreso;
+
     // A = albergado; L = liberado; F = fallecido.
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "estado", nullable = false, length = 1)
@@ -45,8 +60,20 @@ public class Animal {
     @Column(name = "estado_salud", nullable = false, length = 1)
     private String estadoSalud;
 
+    @Column(name = "fecha_inicio_cuarentena")
+    private LocalDate fechaInicioCuarentena;
+
+    @Column(name = "fecha_fin_cuarentena")
+    private LocalDate fechaFinCuarentena;
+
+    @Column(name = "fecha_salida")
+    private LocalDate fechaSalida;
+
     @Column(name = "foto_url")
     private String fotoUrl;
+
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
 
     @Column(name = "activo", nullable = false)
     private Boolean activo;

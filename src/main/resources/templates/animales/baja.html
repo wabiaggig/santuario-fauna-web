@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirmar baja | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main class="gestion confirmacion">
+    <h1>Dar de baja la ficha</h1>
+    <p>Vas a dar de baja la ficha de <strong th:text="${animal.nombre}"></strong>, código <strong th:text="${animal.codigo}"></strong>.</p>
+    <p>Dejará de aparecer entre las fichas activas. Los datos y el historial se conservarán y podrás reactivarla después.</p>
+    <p>Si tiene alojamientos o apadrinamientos abiertos, la baja se rechazará. Esta acción no registra la salida del animal.</p>
+    <form th:if="${animal.activo}" th:action="@{/animales/{id}/baja(id=${animal.idAnimal})}" method="post" class="pie-formulario"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><button class="boton peligro" type="submit">Confirmar baja de la ficha</button><a th:href="@{/animales/{id}(id=${animal.idAnimal})}">Cancelar</a></form>
+    <p th:unless="${animal.activo}">Esta ficha ya está dada de baja. <a th:href="@{/animales/{id}(id=${animal.idAnimal})}">Volver a la ficha</a></p>
+</main>
+</body>
+</html>
