@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animales | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <div class="titulo-acciones">
+        <div><h1>Animales del santuario</h1><p class="descripcion">Cada ficha conserva un ingreso y su recorrido por el refugio.</p></div>
+        <a class="boton" th:href="@{/animales/nuevo}">Registrar ingreso</a>
+    </div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form class="filtros" th:action="@{/animales}" method="get" aria-label="Buscar animales">
+        <div class="busqueda"><label for="texto">Nombre, código o especie</label><input id="texto" name="texto" type="search" maxlength="80" th:value="${texto}" placeholder="Por ejemplo, Azul o SAN-001"></div>
+        <div><label for="estado">Estado del animal</label><select id="estado" name="estado">
+            <option value="">Todos los estados</option>
+            <option value="A" th:selected="${estado == 'A'}">Albergado</option>
+            <option value="L" th:selected="${estado == 'L'}">Liberado</option>
+            <option value="F" th:selected="${estado == 'F'}">Fallecido</option>
+        </select></div>
+        <div><label for="registros">Fichas</label><select id="registros" name="registros">
+            <option value="activos" th:selected="${registros == 'activos'}">Activas</option>
+            <option value="inactivos" th:selected="${registros == 'inactivos'}">Dadas de baja</option>
+            <option value="todos" th:selected="${registros == 'todos'}">Todas</option>
+        </select></div>
+        <button class="boton" type="submit">Buscar</button>
+        <a th:href="@{/animales}" class="limpiar">Limpiar</a>
+    </form>
+    <p class="resultado" role="status"><span th:text="${#lists.size(animales)}">0</span> fichas encontradas</p>
+    <p th:unless="${#lists.isEmpty(animales)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:if="${#lists.isEmpty(animales)}" class="vacio">
+        <h2>No hay fichas para esta búsqueda</h2>
+        <p>Prueba con otro nombre o cambia los filtros. Si el animal acaba de llegar, registra su ingreso.</p>
+        <a th:href="@{/animales/nuevo}">Registrar un ingreso</a>
+    </div>
+    <div th:unless="${#lists.isEmpty(animales)}" class="tabla-scroll" role="region" aria-label="Fichas de animales" tabindex="0">
+        <table>
+            <caption class="solo-lector">Animales encontrados y acceso a sus fichas</caption>
+            <thead><tr><th scope="col">Código</th><th scope="col">Animal y especie</th><th scope="col">Ingreso</th><th scope="col">Estado</th><th scope="col">Salud</th><th scope="col">Ficha</th><th scope="col">Acciones</th></tr></thead>
+            <tbody><tr th:each="animal : ${animales}">
+                <td class="codigo" th:text="${animal.codigo}">SAN-001</td>
+                <td><a class="nombre-animal" th:href="@{/animales/{id}(id=${animal.idAnimal})}" th:text="${animal.nombre}">Azul</a><span class="especie" th:text="${animal.especie.nombreComun}">Especie</span></td>
+                <td class="fecha" th:text="${#temporals.format(animal.fechaIngreso, 'dd/MM/yyyy')}"></td>
+                <td><span class="estado" th:text="${estados[animal.estado]}"></span></td>
+                <td th:text="${salud[animal.estadoSalud]}"></td>
+                <td th:text="${animal.activo ? 'Activa' : 'Dada de baja'}"></td>
+                <td><div class="acciones-fila"><a th:href="@{/animales/{id}(id=${animal.idAnimal})}" th:aria-label="|Ver ficha de ${animal.nombre}|">Ver ficha</a><a th:if="${animal.activo}" th:href="@{/animales/{id}/editar(id=${animal.idAnimal})}" th:aria-label="|Editar ficha de ${animal.nombre}|">Editar</a></div></td>
+            </tr></tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

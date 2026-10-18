@@ -26,4 +26,7 @@ public class Especie {
 
     @Column(name = "nombre_cientifico", nullable = false, length = 120)
     private String nombreCientifico;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean activo;
 }

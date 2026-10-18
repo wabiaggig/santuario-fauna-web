@@ -25,7 +25,8 @@
         </section>
         <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
             <h2>Gestión del refugio</h2>
-            <p>Tu cuenta de cuidador está habilitada. Los módulos de animales, alojamientos y revisión de aportes se incorporarán a este espacio.</p>
+            <p>Consulta las fichas de los animales, registra sus ingresos y mantén sus datos actualizados.</p>
+            <a class="boton" th:href="@{/animales}">Gestionar animales</a>
         </section>
         <section class="opcion" th:if="${session.nombreRol == 'Veterinario'}">
             <h2>Cuidado veterinario</h2>
