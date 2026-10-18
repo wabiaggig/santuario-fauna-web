@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap');
+
+.login-page {
+    margin: 0;
+    min-width: 320px;
+    background: #edf2e5;
+    color: #173426;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+.login-layout { display: grid; min-height: 100vh; min-height: 100svh; }
+.login-visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 360px;
+    padding: 24px;
+    color: #fff;
+    background: linear-gradient(90deg, #051f141f, #051f1461), linear-gradient(180deg, #08241829, #051e14c7), url('../images/login-bosque.jpg') 58% center / cover;
+}
+.login-marca { position: relative; color: #fff; text-decoration: none; font: 600 20px/1.4 'Manrope', system-ui, sans-serif; letter-spacing: -.02em; }
+.login-mensaje { position: relative; margin-top: auto; padding-top: 96px; max-width: 576px; }
+.login-mensaje h1 { font: 500 48px/.98 'Manrope', system-ui, sans-serif; letter-spacing: -.04em; margin: 0; }
+.login-mensaje p { color: #ffffffc7; font-size: 16px; line-height: 28px; max-width: 448px; margin: 24px 0 0; }
+.foto-credito { position: absolute; right: 24px; bottom: 20px; color: #fff; font-size: 10px; background: #051e1480; padding: 2px 5px; text-decoration: none; }
+.login-contenido { position: relative; display: flex; align-items: center; justify-content: center; padding: 88px 24px 56px; }
+.login-volver { position: absolute; top: 28px; right: 28px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #315a45; text-decoration: none; }
+.login-volver:hover { color: #153d2a; text-decoration: underline; }
+.login-formulario { width: 100%; max-width: 460px; }
+.login-introduccion { margin-bottom: 40px; }
+.login-introduccion h2 { margin: 0; font: 600 36px/1.2 'Manrope', system-ui, sans-serif; letter-spacing: -.035em; color: #173426; }
+.login-introduccion p { margin: 12px 0 0; color: #637169; font-size: 16px; line-height: 24px; }
+.login-campo { margin-bottom: 20px; }
+.login-campo label { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: #294536; }
+.login-campo input { width: 100%; height: 56px; border: 1px solid #c3cec2; border-radius: 16px; background: #ffffffb8; padding: 0 16px; color: #173426; outline: none; transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease; }
+.login-campo input::placeholder { color: #69776d; }
+.login-campo input:focus { border-color: #527a5f; background: #fff; box-shadow: 0 0 0 4px #527a5f1f; }
+.clave-control { position: relative; }
+.clave-control input { padding-right: 88px; }
+.mostrar-clave { position: absolute; top: 50%; right: 16px; transform: translateY(-50%); border: 0; background: transparent; font: 700 12px 'DM Sans', system-ui, sans-serif; color: #52705e; cursor: pointer; padding: 10px 0; }
+.mostrar-clave:hover { color: #173426; }
+.login-ingresar { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 56px; border: 0; border-radius: 16px; background: #174c32; color: #fff; font: 700 16px 'DM Sans', system-ui, sans-serif; box-shadow: 0 12px 30px #174c3238; cursor: pointer; transition: background 180ms ease, box-shadow 180ms ease; }
+.login-ingresar:hover { background: #0f3d28; box-shadow: 0 16px 36px #174c3247; }
+.login-ingresar:active { background: #0b3020; }
+.login-ayuda { margin: 32px 0 0; text-align: center; color: #5d6b62; font-size: 14px; line-height: 22px; }
+.login-page :focus-visible { outline: 3px solid #527a5f; outline-offset: 4px; }
+.login-page ::selection { background: #174c32; color: #fff; }
+.login-page .aviso { font-size: 14px; }
+@media (min-width: 640px) {
+    .login-visual { padding: 40px; }
+    .login-mensaje h1 { font-size: 60px; }
+    .login-contenido { padding-right: 48px; padding-left: 48px; }
+}
+@media (min-width: 1024px) {
+    .login-layout { grid-template-columns: 1.12fr .88fr; }
+    .login-visual { min-height: 100vh; min-height: 100svh; padding: 48px; }
+    .login-contenido { padding: 100px 64px 80px; }
+    .login-volver { top: 40px; right: 48px; }
+}
+@media (min-width: 1280px) {
+    .login-visual { padding: 64px; }
+    .login-mensaje h1 { font-size: 72px; }
+    .login-contenido { padding-right: 96px; padding-left: 96px; }
+}
+@media (max-width: 1023px) {
+    .login-visual { padding-bottom: 60px; }
+    .login-mensaje { padding-top: 72px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .login-page *, .login-page *::before, .login-page *::after { transition: none !important; }
+}

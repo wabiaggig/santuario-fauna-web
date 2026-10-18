@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar sesión | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script th:src="@{/js/login.js}" defer></script>
+</head>
+<body class="login-page">
+    <main class="login-layout">
+        <section class="login-visual" aria-labelledby="titulo-santuario">
+            <a class="login-marca" th:href="@{/}">Santuario Río Verde</a>
+            <div class="login-mensaje">
+                <h1 id="titulo-santuario">Cada cuidado<br>deja una huella.</h1>
+                <p>Un espacio para acompañar, proteger y hacer visible la recuperación de nuestra fauna silvestre.</p>
+            </div>
+            <a class="foto-credito" href="https://unsplash.com/@thephotoandfocus" target="_blank" rel="noreferrer">Fotografía: MARCO / Unsplash</a>
+        </section>
+        <section class="login-contenido" aria-labelledby="titulo-login">
+            <a class="login-volver" th:href="@{/}"><span aria-hidden="true">←</span> Volver al inicio</a>
+            <div class="login-formulario">
+                <div class="login-introduccion">
+                    <h2 id="titulo-login">Iniciar sesión</h2>
+                    <p>Ingresa con la cuenta asignada por el santuario.</p>
+                </div>
+                <p th:if="${mensaje}" th:text="${mensaje}" class="aviso exito" role="status"></p>
+                <p th:if="${error}" th:text="${error}" class="aviso error" role="alert" id="error-login"></p>
+                <form th:action="@{/iniciar-sesion}" th:object="${filter}" method="post" id="login-form">
+                    <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+                    <div class="login-campo">
+                        <label for="correo">Correo electrónico</label>
+                        <input id="correo" type="email" th:field="*{correo}" required maxlength="120"
+                               autocomplete="username" inputmode="email" placeholder="nombre@ejemplo.com"
+                               th:attr="aria-describedby=${error != null ? 'error-login' : null}">
+                    </div>
+                    <div class="login-campo">
+                        <label for="clave">Contraseña</label>
+                        <div class="clave-control">
+                            <input id="clave" name="clave" type="password" required maxlength="72"
+                                   autocomplete="current-password" placeholder="Ingresa tu contraseña"
+                                   th:attr="aria-describedby=${error != null ? 'error-login' : null}">
+                            <button type="button" class="mostrar-clave" aria-controls="clave" aria-pressed="false" hidden>Mostrar</button>
+                        </div>
+                    </div>
+                    <button class="login-ingresar" type="submit"><span>Ingresar al santuario</span><span aria-hidden="true">→</span></button>
+                </form>
+                <p class="login-ayuda">¿Problemas para ingresar? Comunícate con el responsable del santuario.</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

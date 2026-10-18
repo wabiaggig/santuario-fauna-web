@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mi espacio | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+</head>
+<body>
+    <header class="cabecera">
+        <a class="marca" th:href="@{/}">Santuario <span>Río Verde</span></a>
+        <form th:action="@{/cerrar-sesion}" method="post">
+            <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+            <button class="enlace-boton" type="submit">Cerrar sesión</button>
+        </form>
+    </header>
+    <main class="panel">
+        <h1>Bienvenido, <span th:text="${session.fullName}">usuario</span></h1>
+        <p class="descripcion">Tu rol es <strong th:text="${session.nombreRol}">rol</strong>.</p>
+
+        <section class="opcion" th:if="${session.nombreRol == 'Padrino'}">
+            <h2>Acompaña a un animal</h2>
+            <p>Conoce los animales disponibles y elige a quién quieres apoyar.</p>
+            <a class="boton" th:href="@{/apadrinamientos/animales}">Ver animales para apadrinar</a>
+        </section>
+        <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
+            <h2>Gestión del refugio</h2>
+            <p>Tu cuenta de cuidador está habilitada. Los módulos de animales, alojamientos y revisión de aportes se incorporarán a este espacio.</p>
+        </section>
+        <section class="opcion" th:if="${session.nombreRol == 'Veterinario'}">
+            <h2>Cuidado veterinario</h2>
+            <p>Tu cuenta de veterinario está habilitada. El módulo de seguimiento y atención médica se incorporará a este espacio.</p>
+        </section>
+        <a class="volver" th:href="@{/}">Volver a la portada</a>
+    </main>
+</body>
+</html>
