@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acceso restringido | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+</head>
+<body>
+    <main class="panel">
+        <h1>No puedes completar esta operación</h1>
+        <p class="descripcion">Revisa las opciones habilitadas para tu rol. Si el formulario quedó desactualizado, vuelve a iniciar sesión.</p>
+        <a class="boton" th:href="@{/panel}">Volver a mi espacio</a>
+        <p><a th:href="@{/login}">Ir a iniciar sesión</a></p>
+    </main>
+</body>
+</html>
