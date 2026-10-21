@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zonas y disponibilidad | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <div class="titulo-acciones"><div><h1>Zonas del santuario</h1><p class="descripcion">Consulta la ocupación y los espacios disponibles antes de alojar o trasladar un animal.</p></div><a class="boton" th:href="@{/zonas/nueva}">Registrar zona</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form class="filtros" th:action="@{/zonas}" method="get" aria-label="Consultar disponibilidad de zonas">
+        <div class="busqueda"><label for="texto">Nombre de la zona</label><input id="texto" name="texto" type="search" maxlength="80" th:value="${texto}"></div>
+        <div><label for="tipo">Tipo de zona</label><select id="tipo" name="tipo"><option value="">Todos los tipos</option><option value="C" th:selected="${tipo == 'C'}">Cuarentena</option><option value="R" th:selected="${tipo == 'R'}">Rehabilitación</option><option value="H" th:selected="${tipo == 'H'}">Hábitat</option></select></div>
+        <div><label for="cuposMinimos">Cupos libres mínimos</label><input id="cuposMinimos" name="cuposMinimos" type="number" min="0" max="2147483647" step="1" th:value="${cuposMinimos}"></div>
+        <div><label for="registros">Zonas</label><select id="registros" name="registros"><option value="activos" th:selected="${registros == 'activos'}">Activas</option><option value="inactivos" th:selected="${registros == 'inactivos'}">Dadas de baja</option><option value="todos" th:selected="${registros == 'todos'}">Todas</option></select></div>
+        <button class="boton" type="submit">Consultar</button><a class="limpiar" th:href="@{/zonas}">Limpiar</a>
+    </form>
+    <p class="resultado" role="status"><span th:text="${#lists.size(zonas)}">0</span> zonas encontradas</p>
+    <div th:if="${#lists.isEmpty(zonas)}" class="vacio"><h2>No hay zonas para esta consulta</h2><p>Cambia el tipo, el nombre o la cantidad de cupos mínimos para ampliar la búsqueda.</p><a th:href="@{/zonas}">Ver zonas activas</a></div>
+    <p th:unless="${#lists.isEmpty(zonas)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:unless="${#lists.isEmpty(zonas)}" class="tabla-scroll" role="region" aria-label="Disponibilidad de zonas" tabindex="0"><table>
+        <caption class="solo-lector">Capacidad, ocupación y cupos disponibles de las zonas</caption>
+        <thead><tr><th scope="col">Zona</th><th scope="col">Tipo</th><th scope="col">Capacidad</th><th scope="col">Ocupados</th><th scope="col">Disponibles</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead>
+        <tbody><tr th:each="zona : ${zonas}" th:with="ocupados=${ocupacion[zona.idZona] ?: 0}">
+            <td><a class="nombre-animal" th:href="@{/zonas/{id}(id=${zona.idZona})}" th:text="${zona.nombre}"></a></td><td th:text="${tiposZona[zona.tipo]}"></td><td class="codigo" th:text="${zona.capacidad}"></td><td class="codigo" th:text="${ocupados}"></td><td class="codigo" th:text="${zona.activo and zona.capacidad > ocupados ? zona.capacidad - ocupados : 0}"></td><td th:text="${zona.activo ? 'Activa' : 'Dada de baja'}"></td>
+            <td><div class="acciones-fila"><a th:href="@{/zonas/{id}(id=${zona.idZona})}" th:aria-label="|Ver zona ${zona.nombre}|">Ver zona</a><a th:if="${zona.activo}" th:href="@{/zonas/{id}/editar(id=${zona.idZona})}" th:aria-label="|Editar zona ${zona.nombre}|">Editar</a></div></td>
+        </tr></tbody>
+    </table></div>
+    <p class="ayuda">Los cupos se calculan con los alojamientos vigentes. Una zona dada de baja no recibe nuevos alojamientos.</p>
+</main>
+</body>
+</html>

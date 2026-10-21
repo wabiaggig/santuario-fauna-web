@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|Trasladar a ${actual.animal.nombre} · Santuario Río Verde|"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion formulario-animal">
+    <a th:href="@{/animales/{id}(id=${actual.animal.idAnimal})}">Volver a la ficha sin trasladar</a>
+    <h1 th:text="|Trasladar a ${actual.animal.nombre}|"></h1>
+    <p class="descripcion">El traslado cerrará el alojamiento actual y abrirá uno nuevo con la fecha y hora del registro.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <section class="datos-ficha" aria-labelledby="ubicacion"><h2 id="ubicacion">Alojamiento actual</h2><dl>
+        <div><dt>Animal</dt><dd th:text="|${actual.animal.codigo} · ${actual.animal.nombre}|"></dd></div><div><dt>Zona</dt><dd th:text="${actual.zona.nombre}"></dd></div>
+        <div><dt>Tipo de zona</dt><dd th:text="${tiposZona[actual.zona.tipo]}"></dd></div><div><dt>Entrada</dt><dd th:text="${#temporals.format(actual.fechaEntrada, 'dd/MM/yyyy HH:mm')}"></dd></div>
+    </dl></section>
+    <p th:if="${cuarentenaAbierta}" class="aviso">El animal sigue en cuarentena. Puedes trasladarlo a otra zona de cuarentena; el veterinario debe autorizar su finalización para pasar a rehabilitación o hábitat.</p>
+    <p th:unless="${cuarentenaAbierta}" class="ayuda">Se muestran zonas de rehabilitación y hábitat. Una nueva cuarentena requiere evaluación veterinaria.</p>
+    <form th:action="@{/alojamientos/trasladar/{id}(id=${actual.animal.idAnimal})}" th:object="${form}" method="post">
+        <input type="hidden" name="_csrf" th:value="${session.csrfToken}"><input type="hidden" th:field="*{idAlojamientoOrigen}">
+        <fieldset><legend>Destino del traslado</legend>
+            <label for="idZonaDestino">Zona de destino *</label><select id="idZonaDestino" th:field="*{idZonaDestino}" required aria-describedby="ayuda-destino">
+                <option value="">Selecciona una zona diferente</option>
+                <option th:each="zona : ${zonas}" th:if="${zona.idZona != actual.zona.idZona and ((cuarentenaAbierta and zona.tipo == 'C') or (!cuarentenaAbierta and zona.tipo != 'C'))}" th:with="ocupados=${ocupacion[zona.idZona] ?: 0}" th:value="${zona.idZona}" th:disabled="${ocupados >= zona.capacidad}" th:text="|${zona.nombre} · ${tiposZona[zona.tipo]} · ${zona.capacidad > ocupados ? zona.capacidad - ocupados : 0} cupos libres|"></option>
+            </select><small id="ayuda-destino">El cupo se vuelve a comprobar al guardar. Si no hay un destino disponible, coordina la habilitación de otra zona.</small>
+            <label for="observaciones">Observaciones del traslado</label><textarea id="observaciones" th:field="*{observaciones}" maxlength="255" rows="4"></textarea><small>Opcional. Hasta 255 caracteres.</small>
+        </fieldset>
+        <p class="ayuda">La salud y las fechas de cuarentena se conservan. Si el traslado no puede completarse, el alojamiento anterior permanece vigente.</p>
+        <div class="pie-formulario"><button class="boton" type="submit">Confirmar traslado</button><a th:href="@{/animales/{id}(id=${actual.animal.idAnimal})}">Cancelar</a></div>
+        <p class="ayuda"><a th:href="@{/alojamientos/trasladar/{id}(id=${actual.animal.idAnimal})}">Actualizar datos del traslado</a></p>
+    </form>
+</main>
+</body>
+</html>

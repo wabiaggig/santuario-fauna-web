@@ -36,6 +36,6 @@ public interface AnimalRepository extends JpaRepository<Animal, Integer> {
     @Query("select a from Animal a where a.idAnimal = :id")
     Optional<Animal> bloquearPorId(@Param("id") Integer id);
 
-    @Query(value = "select count(*) from tbl_apadrinamiento where id_animal = :id and fecha_fin is null", nativeQuery = true)
+    @Query(value = "select count(*) from tbl_apadrinamiento where id_animal = :id and fecha_fin is null and estado_solicitud in ('PENDIENTE', 'APROBADA')", nativeQuery = true)
     long contarApadrinamientosAbiertos(@Param("id") Integer id);
 }

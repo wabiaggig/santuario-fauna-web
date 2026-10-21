@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alojamientos vigentes | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <div class="titulo-acciones"><div><h1>Alojamientos vigentes</h1><p class="descripcion">Revisa dónde está cada animal y registra sus cambios de zona conservando el historial.</p></div><a class="boton" th:href="@{/zonas}">Consultar cupos</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form class="filtros" th:action="@{/alojamientos}" method="get" aria-label="Buscar alojamientos">
+        <div class="busqueda"><label for="texto">Nombre o código del animal</label><input id="texto" name="texto" type="search" maxlength="80" th:value="${texto}"></div>
+        <div><label for="idZona">Zona</label><select id="idZona" name="idZona"><option value="">Todas las zonas</option><option th:each="zona : ${zonas}" th:value="${zona.idZona}" th:selected="${idZona == zona.idZona}" th:text="${zona.nombre}"></option></select></div>
+        <button class="boton" type="submit">Buscar</button><a class="limpiar" th:href="@{/alojamientos}">Limpiar</a>
+    </form>
+    <p class="resultado" role="status"><span th:text="${#lists.size(alojamientos)}">0</span> alojamientos vigentes encontrados</p>
+    <div th:if="${#lists.isEmpty(alojamientos)}" class="vacio"><h2>No hay alojamientos para esta búsqueda</h2><p>Cambia el nombre o la zona. Los alojamientos cerrados se conservan en la ficha de cada animal.</p><a th:href="@{/animales}">Consultar fichas de animales</a></div>
+    <p th:unless="${#lists.isEmpty(alojamientos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:unless="${#lists.isEmpty(alojamientos)}" class="tabla-scroll" role="region" aria-label="Alojamientos vigentes" tabindex="0"><table>
+        <caption class="solo-lector">Ubicación actual de los animales y acceso al traslado</caption><thead><tr><th scope="col">Animal</th><th scope="col">Zona</th><th scope="col">Tipo</th><th scope="col">Entrada</th><th scope="col">Responsable del ingreso</th><th scope="col">Acciones</th></tr></thead>
+        <tbody><tr th:each="alojamiento : ${alojamientos}">
+            <td><a class="nombre-animal" th:href="@{/animales/{id}(id=${alojamiento.animal.idAnimal})}" th:text="${alojamiento.animal.nombre}"></a><span class="especie" th:text="${alojamiento.animal.codigo}"></span></td>
+            <td><a th:href="@{/zonas/{id}(id=${alojamiento.zona.idZona})}" th:text="${alojamiento.zona.nombre}"></a></td><td th:text="${tiposZona[alojamiento.zona.tipo]}"></td><td class="fecha" th:text="${#temporals.format(alojamiento.fechaEntrada, 'dd/MM/yyyy HH:mm')}"></td><td th:text="${alojamiento.responsable.fullName}"></td>
+            <td><a th:if="${alojamiento.animal.activo and alojamiento.animal.estado == 'A'}" th:href="@{/alojamientos/trasladar/{id}(id=${alojamiento.animal.idAnimal})}" th:aria-label="|Trasladar a ${alojamiento.animal.nombre}|">Registrar traslado</a></td>
+        </tr></tbody>
+    </table></div>
+</main>
+</body>
+</html>

@@ -33,6 +33,7 @@
         <p th:if="${animal.fotoUrl != null and (#strings.startsWith(animal.fotoUrl, 'https://') or #strings.startsWith(animal.fotoUrl, 'http://'))}"><a th:href="${animal.fotoUrl}" target="_blank" rel="noopener noreferrer">Abrir foto del animal (nueva pestaña)</a></p>
     </section>
     <section class="historial" aria-labelledby="alojamientos"><h2 id="alojamientos">Historial de alojamientos</h2>
+        <p th:if="${animal.activo and animal.estado == 'A' and !#lists.isEmpty(alojamientos)}"><a th:href="@{/alojamientos/trasladar/{id}(id=${animal.idAnimal})}">Registrar traslado a otra zona</a></p>
         <p th:if="${#lists.isEmpty(alojamientos)}">Esta ficha no tiene alojamientos registrados.</p>
         <p th:unless="${#lists.isEmpty(alojamientos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
         <div th:unless="${#lists.isEmpty(alojamientos)}" class="tabla-scroll" role="region" aria-label="Historial de alojamientos" tabindex="0"><table>
