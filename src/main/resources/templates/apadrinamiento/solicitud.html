@@ -51,6 +51,7 @@
         <div th:if="${error != null}" class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 text-sm" role="alert" th:text="${error}">Error</div>
 
         <form th:action="@{/apadrinamientos/revisar/{id}(id=${animal.idAnimal})}" th:object="${solicitud}" method="post" class="space-y-5">
+          <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
           <div>
             <label for="aporteMensual" class="block text-sm font-semibold mb-2">Aporte mensual acordado (S/) <span class="text-red-600">*</span></label>
             <input id="aporteMensual" th:field="*{aporteMensual}" type="number" step="0.01" min="0.01" required

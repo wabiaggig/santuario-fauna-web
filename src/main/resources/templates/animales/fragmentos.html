@@ -6,6 +6,7 @@
     <nav aria-label="Navegación del cuidador">
         <a th:href="@{/panel}">Mi espacio</a>
         <a th:href="@{/animales}">Animales</a>
+		<a th:href="@{/apadrinamientos/solicitudes}">Solicitudes</a>
         <form th:action="@{/cerrar-sesion}" method="post">
             <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
             <button class="enlace-boton" type="submit">Cerrar sesión</button>

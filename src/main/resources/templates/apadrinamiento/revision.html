@@ -20,9 +20,11 @@
   <main class="max-w-3xl mx-auto px-5 py-12">
     <p class="font-bold text-xs uppercase tracking-widest text-brand-leaf mb-3">Vista previa</p>
     <h1 class="text-3xl sm:text-4xl font-bold mb-4">Revisa tu solicitud</h1>
-    <div class="rounded-2xl border border-amber-300 bg-amber-50 text-amber-900 p-5 mb-7" role="status">
-      <strong>Solicitud todavía no registrada.</strong> Estos datos solamente fueron validados para su revisión. No se guardó ningún apadrinamiento ni se generó una deuda o donación.
+    <div class="rounded-2xl border border-blue-200 bg-blue-50 text-blue-900 p-5 mb-7" role="status">
+      <strong>Vista previa.</strong> Comprueba los datos antes de enviarlos. La solicitud
+      quedara pendiente de aprobacion por el cuidador; aqui no se procesa ningun pago.
     </div>
+    <div th:if="${error != null}" class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4 mb-6" role="alert" th:text="${error}"></div>
     <section class="bg-white border border-gray-100 shadow-sm rounded-2xl p-6 sm:p-8">
       <dl class="space-y-5">
         <div><dt class="text-sm text-gray-500">Animal seleccionado</dt><dd class="font-bold text-xl" th:text="${animal.nombre}">Azul</dd></div>
@@ -33,12 +35,20 @@
           <dt class="text-sm text-gray-500">Observaciones</dt><dd class="whitespace-pre-wrap" th:text="${solicitud.observaciones}">Observación</dd>
         </div>
       </dl>
-      <a th:href="@{/apadrinamientos/nuevo/{id}(id=${animal.idAnimal})}"
-         class="mt-8 inline-flex items-center justify-center rounded-full border border-brand-leaf text-brand-leaf px-6 py-3 font-semibold hover:bg-brand-light transition">
-        Volver a editar
-      </a>
+      <div class="mt-8 flex flex-wrap gap-3 items-center">
+        <a th:href="@{/apadrinamientos/nuevo/{id}(id=${animal.idAnimal})}"
+           class="inline-flex items-center justify-center rounded-full border border-brand-leaf text-brand-leaf px-6 py-3 font-semibold hover:bg-brand-light transition">
+          Volver a editar
+        </a>
+        <form th:action="@{/apadrinamientos/registrar/{id}(id=${animal.idAnimal})}" method="post">
+          <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+          <button type="submit" class="rounded-full bg-brand-leaf text-white px-6 py-3 font-semibold hover:bg-green-700 transition">
+            Enviar solicitud de apadrinamiento
+          </button>
+        </form>
+      </div>
     </section>
-    <p class="text-gray-600 mt-6 text-sm">Cuando el compañero termine el inicio de sesión, conectaremos aquí la confirmación final utilizando el padrino autenticado.</p>
+    <p class="text-gray-600 mt-6 text-sm">Al enviarla, el sistema registrara tu solicitud como PENDIENTE. El cuidador revisara si corresponde aprobarla o rechazarla.</p>
   </main>
 </body>
 </html>
