@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de solicitudes | Santuario Río Verde</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { light: '#f4faec', leaf: '#4a7c59' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-brand-light min-h-screen font-sans text-gray-900">
+  <header class="bg-white border-b border-gray-100">
+    <nav class="max-w-6xl mx-auto px-5 py-5 flex flex-wrap justify-between items-center gap-3">
+      <a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+      <a th:href="@{/apadrinamientos/solicitudes}" class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline">Volver a pendientes</a>
+    </nav>
+  </header>
+  <main class="max-w-6xl mx-auto px-5 py-12">
+    <p class="text-xs uppercase tracking-widest text-brand-leaf font-bold mb-3">Panel del cuidador</p>
+    <h1 class="text-3xl sm:text-4xl font-bold mb-3">Historial de solicitudes</h1>
+    <p class="text-gray-600 mb-8">Consulta solicitudes pendientes, aprobadas y rechazadas, sin modificar decisiones ya registradas.</p>
+    <section th:if="${#lists.isEmpty(solicitudes)}" class="bg-white p-8 rounded-xl border border-gray-100 text-gray-600">No hay solicitudes registradas.</section>
+    <section th:unless="${#lists.isEmpty(solicitudes)}" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+      <table class="min-w-full text-sm text-left">
+        <thead class="bg-gray-50 text-gray-600"><tr>
+          <th class="px-5 py-4">N.º</th><th class="px-5 py-4">Padrino</th><th class="px-5 py-4">Animal</th>
+          <th class="px-5 py-4">Aporte</th><th class="px-5 py-4">Estado</th><th class="px-5 py-4">Fecha revisión</th><th class="px-5 py-4">Motivo</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr th:each="solicitud : ${solicitudes}" class="hover:bg-green-50/40">
+            <td class="px-5 py-4 font-semibold" th:text="${'#' + solicitud.id}">#3</td>
+            <td class="px-5 py-4" th:text="${solicitud.padrino}">Ana Lucía</td>
+            <td class="px-5 py-4"><span class="font-semibold" th:text="${solicitud.animal}">Kiro</span><span class="block text-xs text-gray-500" th:text="${solicitud.codigoAnimal}">SAN-002</span></td>
+            <td class="px-5 py-4 whitespace-nowrap">S/ <span th:text="${#numbers.formatDecimal(solicitud.monto,1,2)}">50.00</span></td>
+            <td class="px-5 py-4"><span class="font-semibold" th:classappend="${solicitud.estado == 'APROBADA' ? ' text-green-700' : (solicitud.estado == 'RECHAZADA' ? ' text-red-700' : ' text-amber-700')}" th:text="${solicitud.estado}">PENDIENTE</span></td>
+            <td class="px-5 py-4 whitespace-nowrap" th:text="${solicitud.fechaRevision != null ? #temporals.format(solicitud.fechaRevision, 'dd/MM/yyyy HH:mm') : 'Sin revisar'}">Sin revisar</td>
+            <td class="px-5 py-4 max-w-xs whitespace-pre-wrap break-words" th:text="${solicitud.estado == 'RECHAZADA' ? (solicitud.motivoRechazo != null ? solicitud.motivoRechazo : 'Sin motivo registrado') : '—'}">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

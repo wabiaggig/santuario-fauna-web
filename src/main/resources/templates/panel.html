@@ -22,12 +22,19 @@
             <h2>Acompaña a un animal</h2>
             <p>Conoce los animales disponibles y elige a quién quieres apoyar.</p>
             <a class="boton" th:href="@{/apadrinamientos/animales}">Ver animales para apadrinar</a>
-        </section>
+			<a class="boton" th:href="@{/apadrinamientos/mis-solicitudes}">Mis solicitudes</a>
+			</section>
         <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
             <h2>Gestión del refugio</h2>
             <p>Consulta las fichas de los animales, registra sus ingresos y mantén sus datos actualizados.</p>
             <a class="boton" th:href="@{/animales}">Gestionar animales</a>
         </section>
+		<section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
+		    <h2>Apadrinamientos pendientes</h2>
+		    <p>Consulta las solicitudes enviadas por los padrinos y revisa su información.</p>
+		    <a class="boton" th:href="@{/apadrinamientos/solicitudes}">Ver solicitudes pendientes</a>
+			<a class="boton" th:href="@{/apadrinamientos/solicitudes/historial}">Historial de solicitudes</a>
+		</section>
         <section class="opcion" th:if="${session.nombreRol == 'Veterinario'}">
             <h2>Cuidado veterinario</h2>
             <p>Tu cuenta de veterinario está habilitada. El módulo de seguimiento y atención médica se incorporará a este espacio.</p>
