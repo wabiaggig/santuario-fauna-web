@@ -31,7 +31,6 @@ public class Alojamiento {
     @JoinColumn(name = "id_responsable", nullable = false)
     private Usuario responsable;
 
-    // DATETIME conserva la hora local registrada, sin convertirla entre zonas.
     @JdbcTypeCode(SqlTypes.LOCAL_DATE_TIME)
     @Column(name = "fecha_entrada", nullable = false)
     private LocalDateTime fechaEntrada;

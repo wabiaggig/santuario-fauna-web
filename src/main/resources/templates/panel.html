@@ -35,6 +35,12 @@
 		    <a class="boton" th:href="@{/apadrinamientos/solicitudes}">Ver solicitudes pendientes</a>
 			<a class="boton" th:href="@{/apadrinamientos/solicitudes/historial}">Historial de solicitudes</a>
 		</section>
+        <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
+            <h2>Zonas y alojamientos</h2>
+            <p>Revisa los cupos del refugio, administra sus zonas y registra los traslados de animales.</p>
+            <a class="boton" th:href="@{/zonas}">Gestionar zonas</a>
+            <a class="volver" th:href="@{/alojamientos}">Ver alojamientos vigentes</a>
+        </section>
         <section class="opcion" th:if="${session.nombreRol == 'Veterinario'}">
             <h2>Cuidado veterinario</h2>
             <p>Tu cuenta de veterinario está habilitada. El módulo de seguimiento y atención médica se incorporará a este espacio.</p>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${idZona == null ? 'Registrar zona | Santuario Río Verde' : 'Editar zona | Santuario Río Verde'}"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion formulario-animal">
+    <a th:href="${idZona == null} ? @{/zonas} : @{/zonas/{id}(id=${idZona})}">Volver sin guardar</a>
+    <h1 th:text="${idZona == null ? 'Registrar una zona' : 'Editar la zona'}"></h1>
+    <p class="descripcion">Define el espacio y su capacidad. La ocupación se calcula a partir de los animales alojados.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <p th:if="${idZona != null}" class="aviso">Alojamientos vigentes: <strong th:text="${ocupacion[idZona] ?: 0}"></strong>. La capacidad no puede quedar por debajo de esa cantidad y el tipo solo puede cambiar cuando la zona esté vacía.</p>
+    <form th:action="${idZona == null} ? @{/zonas/guardar} : @{/zonas/{id}/guardar(id=${idZona})}" th:object="${form}" method="post">
+        <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+        <p class="ayuda">Los campos con * son obligatorios.</p>
+        <fieldset><legend>Datos de la zona</legend><div class="campos">
+            <div class="ancho-completo"><label for="nombre">Nombre *</label><input id="nombre" th:field="*{nombre}" maxlength="80" required aria-describedby="ayuda-nombre"><small id="ayuda-nombre">Usa un nombre único para identificar el espacio.</small></div>
+            <div><label for="tipo">Tipo *</label><select id="tipo" th:field="*{tipo}" required><option value="">Selecciona un tipo</option><option value="C">Cuarentena</option><option value="R">Rehabilitación</option><option value="H">Hábitat</option></select></div>
+            <div><label for="capacidad">Capacidad *</label><input id="capacidad" th:field="*{capacidad}" type="number" min="1" max="2147483647" step="1" required aria-describedby="ayuda-capacidad"><small id="ayuda-capacidad">Cantidad máxima de animales que puede alojar.</small></div>
+            <div class="ancho-completo"><label for="descripcion">Descripción</label><textarea id="descripcion" th:field="*{descripcion}" maxlength="255" rows="4"></textarea><small>Opcional. Hasta 255 caracteres.</small></div>
+        </div></fieldset>
+        <div class="pie-formulario"><button class="boton" type="submit" th:text="${idZona == null ? 'Guardar zona' : 'Guardar cambios'}"></button><a th:href="${idZona == null} ? @{/zonas} : @{/zonas/{id}(id=${idZona})}">Cancelar</a></div>
+    </form>
+</main>
+</body>
+</html>

@@ -11,6 +11,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface ZonaRepository extends JpaRepository<Zona, Integer> {
     List<Zona> findByActivoTrueAndTipoOrderByNombreAsc(String tipo);
+    List<Zona> findAllByOrderByNombreAsc();
+    List<Zona> findByActivoTrueOrderByNombreAsc();
+    boolean existsByNombreIgnoreCaseAndIdZonaNot(String nombre, Integer idZona);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select z from Zona z where z.idZona = :id")

@@ -28,6 +28,9 @@ public class Zona {
     @Column(nullable = false)
     private Integer capacidad;
 
+    @Column(length = 255)
+    private String descripcion;
+
     @Column(nullable = false)
     private Boolean activo;
 }

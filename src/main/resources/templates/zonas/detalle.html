@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${zona.nombre} · Santuario Río Verde|"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <a th:href="@{/zonas}">Volver a zonas</a>
+    <div class="titulo-acciones"><div><h1 th:text="${zona.nombre}"></h1><p class="descripcion" th:text="${tiposZona[zona.tipo]}"></p></div><a th:if="${zona.activo}" class="boton" th:href="@{/zonas/{id}/editar(id=${zona.idZona})}">Editar zona</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <section class="datos-ficha" aria-labelledby="datos"><h2 id="datos">Capacidad y disponibilidad</h2><dl>
+        <div><dt>Capacidad total</dt><dd th:text="${zona.capacidad}"></dd></div><div><dt>Alojamientos vigentes</dt><dd th:text="${#lists.size(alojamientos)}"></dd></div>
+        <div><dt>Cupos disponibles</dt><dd th:text="${zona.activo and zona.capacidad > #lists.size(alojamientos) ? zona.capacidad - #lists.size(alojamientos) : 0}"></dd></div><div><dt>Estado de la zona</dt><dd th:text="${zona.activo ? 'Activa' : 'Dada de baja'}"></dd></div>
+        <div class="ancho-completo"><dt>Descripción</dt><dd class="texto-largo" th:text="${#strings.isEmpty(zona.descripcion) ? 'Sin descripción.' : zona.descripcion}"></dd></div>
+    </dl></section>
+    <section class="historial" aria-labelledby="ocupantes"><h2 id="ocupantes">Animales alojados</h2>
+        <p th:if="${#lists.isEmpty(alojamientos)}">Esta zona no tiene alojamientos vigentes.</p>
+        <p th:unless="${#lists.isEmpty(alojamientos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+        <div th:unless="${#lists.isEmpty(alojamientos)}" class="tabla-scroll" role="region" aria-label="Animales alojados en la zona" tabindex="0"><table>
+            <caption class="solo-lector">Alojamientos vigentes de la zona</caption><thead><tr><th scope="col">Animal</th><th scope="col">Entrada</th><th scope="col">Responsable del ingreso</th><th scope="col">Acciones</th></tr></thead>
+            <tbody><tr th:each="alojamiento : ${alojamientos}"><td><a class="nombre-animal" th:href="@{/animales/{id}(id=${alojamiento.animal.idAnimal})}" th:text="${alojamiento.animal.nombre}"></a><span class="especie" th:text="${alojamiento.animal.codigo}"></span></td><td class="fecha" th:text="${#temporals.format(alojamiento.fechaEntrada, 'dd/MM/yyyy HH:mm')}"></td><td th:text="${alojamiento.responsable.fullName}"></td><td><a th:if="${alojamiento.animal.activo and alojamiento.animal.estado == 'A'}" th:href="@{/alojamientos/trasladar/{id}(id=${alojamiento.animal.idAnimal})}" th:aria-label="|Trasladar a ${alojamiento.animal.nombre}|">Registrar traslado</a></td></tr></tbody>
+        </table></div>
+    </section>
+    <section class="administracion" aria-labelledby="administracion"><h2 id="administracion">Estado de la zona</h2>
+        <p>Dar de baja una zona impide nuevos alojamientos. Los antecedentes de los animales que pasaron por ella se conservan.</p>
+        <p th:if="${zona.activo and !#lists.isEmpty(alojamientos)}">Antes de darla de baja, traslada a todos los animales que siguen alojados aquí.</p>
+        <form th:if="${zona.activo and #lists.isEmpty(alojamientos)}" class="confirmar-baja" th:action="@{/zonas/{id}/baja(id=${zona.idZona})}" method="post"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><label><input type="checkbox" name="confirmar" value="true" required>Confirmo que quiero dar de baja esta zona.</label><button class="boton peligro" type="submit">Dar de baja la zona</button></form>
+        <form th:unless="${zona.activo}" th:action="@{/zonas/{id}/activar(id=${zona.idZona})}" method="post"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><button class="boton" type="submit">Reactivar zona</button></form>
+    </section>
+</main>
+</body>
+</html>

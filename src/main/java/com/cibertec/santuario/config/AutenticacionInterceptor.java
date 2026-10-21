@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.method.HandlerMethod;
 import com.cibertec.santuario.controller.AnimalController;
+import com.cibertec.santuario.controller.ZonaController;
+import com.cibertec.santuario.controller.AlojamientoController;
 
-// Adaptacion para proteger las peticiones; ocultar enlaces no controla el acceso.
+
 @Component
 public class AutenticacionInterceptor implements HandlerInterceptor {
     @Override
@@ -23,7 +25,10 @@ public class AutenticacionInterceptor implements HandlerInterceptor {
             return false;
         }
         String ruta = request.getServletPath();
-        if (AnimalController.class.isAssignableFrom(((HandlerMethod) handler).getBeanType())) {
+        Class<?> controlador = ((HandlerMethod) handler).getBeanType();
+        if (AnimalController.class.isAssignableFrom(controlador)
+                || ZonaController.class.isAssignableFrom(controlador)
+                || AlojamientoController.class.isAssignableFrom(controlador)) {
             if (!"Cuidador".equals(session.getAttribute("nombreRol"))) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return false;
