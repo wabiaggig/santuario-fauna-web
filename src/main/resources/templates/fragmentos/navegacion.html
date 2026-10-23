@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="nav-santuario" th:fragment="cabecera" th:with="r=${rutaActual ?: ''}, rol=${session.nombreRol}">
+    <div class="nav-contenedor">
+        <a class="nav-marca" th:href="@{/}">Santuario <span>Río Verde</span></a>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" tabindex="-1">
+        <label for="nav-toggle" class="nav-boton-menu">Menú</label>
+
+        <nav class="nav-enlaces" aria-label="Navegación principal">
+            <th:block th:if="${session.idUsuario != null}">
+                <a th:href="@{/panel}" th:classappend="${r == '/panel'} ? 'activo'">Mi espacio</a>
+
+                <th:block th:if="${rol == 'Cuidador'}">
+                    <a th:href="@{/animales}" th:classappend="${#strings.startsWith(r, '/animales')} ? 'activo'">Animales</a>
+                    <a th:href="@{/zonas}" th:classappend="${#strings.startsWith(r, '/zonas')} ? 'activo'">Zonas</a>
+                    <a th:href="@{/alojamientos}" th:classappend="${#strings.startsWith(r, '/alojamientos')} ? 'activo'">Alojamientos</a>
+                    <a th:href="@{/cuarentenas}" th:classappend="${#strings.startsWith(r, '/cuarentenas')} ? 'activo'">Cuarentenas</a>
+                    <a th:href="@{/apadrinamientos/solicitudes}" th:classappend="${#strings.startsWith(r, '/apadrinamientos/solicitudes')} ? 'activo'">Apadrinamientos</a>
+                    <a th:href="@{/donaciones/pendientes}" th:classappend="${#strings.startsWith(r, '/donaciones/pendientes')} ? 'activo'">Donaciones</a>
+                    <a th:href="@{/donaciones/control-mensual/cuidador}" th:classappend="${#strings.startsWith(r, '/donaciones/control-mensual')} ? 'activo'">Aportes mensuales</a>
+                    <a th:href="@{/reportes/liberaciones}" th:classappend="${#strings.startsWith(r, '/reportes')} ? 'activo'">Reportes</a>
+                </th:block>
+
+                <th:block th:if="${rol == 'Veterinario'}">
+                    <a th:href="@{/cuarentenas}" th:classappend="${#strings.startsWith(r, '/cuarentenas')} ? 'activo'">Cuarentenas</a>
+                    <a th:href="@{/atenciones}" th:classappend="${#strings.startsWith(r, '/atenciones')} ? 'activo'">Atenciones</a>
+                    <a th:href="@{/medicamentos}" th:classappend="${#strings.startsWith(r, '/medicamentos')} ? 'activo'">Medicamentos</a>
+                    <a th:href="@{/liberaciones}" th:classappend="${#strings.startsWith(r, '/liberaciones')} ? 'activo'">Liberaciones</a>
+                    <a th:href="@{/reportes/medicamentos}" th:classappend="${#strings.startsWith(r, '/reportes')} ? 'activo'">Reportes</a>
+                </th:block>
+
+                <th:block th:if="${rol == 'Padrino'}">
+                    <a th:href="@{/apadrinamientos/animales}" th:classappend="${#strings.startsWith(r, '/apadrinamientos/animales') or #strings.startsWith(r, '/apadrinamientos/nuevo')} ? 'activo'">Apadrinar</a>
+                    <a th:href="@{/apadrinamientos/mis-solicitudes}" th:classappend="${#strings.startsWith(r, '/apadrinamientos/mis-solicitudes') or #strings.startsWith(r, '/apadrinamientos/solicitud-registrada')} ? 'activo'">Mis solicitudes</a>
+                    <a th:href="@{/donaciones/nueva}" th:classappend="${#strings.startsWith(r, '/donaciones/nueva') or #strings.startsWith(r, '/donaciones/registrada')} ? 'activo'">Registrar donación</a>
+                    <a th:href="@{/donaciones/mis-donaciones}" th:classappend="${#strings.startsWith(r, '/donaciones/mis-donaciones')} ? 'activo'">Mis donaciones</a>
+                    <a th:href="@{/donaciones/control-mensual}" th:classappend="${#strings.startsWith(r, '/donaciones/control-mensual')} ? 'activo'">Mis aportes</a>
+                </th:block>
+
+                <div class="nav-sesion">
+                    <span class="nav-usuario"><strong th:text="${session.fullName}">Usuario</strong><span th:text="${rol}">Rol</span></span>
+                    <form th:action="@{/cerrar-sesion}" method="post">
+                        <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+                        <button class="nav-salir" type="submit">Cerrar sesión</button>
+                    </form>
+                </div>
+            </th:block>
+
+            <th:block th:unless="${session.idUsuario != null}">
+                <a th:href="@{/}">Inicio</a>
+                <a th:href="@{/apadrinamientos/animales}" th:classappend="${#strings.startsWith(r, '/apadrinamientos/animales')} ? 'activo'">Animales para apadrinar</a>
+                <div class="nav-sesion"><a th:href="@{/login}">Iniciar sesión</a></div>
+            </th:block>
+        </nav>
+    </div>
+</header>
+</body>
+</html>

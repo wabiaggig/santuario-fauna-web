@@ -7,17 +7,11 @@
 	<title>Mis donaciones | Santuario Río Verde</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 
 <body class="bg-brand-light min-h-screen text-gray-900">
-	<header class="bg-white border-b">
-		<nav class="max-w-6xl mx-auto flex flex-wrap gap-4 justify-between items-center px-5 py-5">
-			<a th:href="@{/}" class="text-xl font-bold">Santuario <span class="text-brand-leaf">Río Verde</span></a>
-			<div class="flex gap-4 text-brand-leaf font-semibold"><a th:href="@{/panel}">← Mi panel</a><a
-					th:href="@{/donaciones/nueva}">Registrar donación</a><a th:href="@{/donaciones/control-mensual}">Mi
-					control mensual</a></div>
-		</nav>
-	</header>
+	<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 	<main class="max-w-6xl mx-auto px-5 py-12">
 		<p class="text-xs font-bold text-brand-leaf uppercase tracking-widest mb-3">Mi espacio · Padrino</p>
 		<h1 class="text-3xl font-bold mb-3">Historial de mis donaciones</h1>

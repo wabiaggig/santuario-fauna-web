@@ -1,3 +1,19 @@
+-- ============================================================================
+-- santuario_completo.sql : crea db_santuario desde cero, lista para la aplicacion.
+-- Une en orden los scripts originales del proyecto:
+--   1. database_santuario.sql
+--   2. Alter_tbl_apadrinamiento.sql
+--   3. Alter_tbl_donacion.sql
+--   4. Agregar_periodo_aporte.sql
+--   5. actualizar_usuarios_login.sql
+-- ATENCION: borra la base db_santuario si ya existe.
+-- ============================================================================
+
+DROP DATABASE IF EXISTS db_santuario;
+
+-- ----------------------------------------------------------------------------
+-- database_santuario.sql
+-- ----------------------------------------------------------------------------
 CREATE DATABASE db_santuario
   CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE db_santuario;
@@ -383,3 +399,125 @@ JOIN tbl_medicamento m ON m.id_medicamento = d.id_medicamento
 WHERE a.fecha_atencion >= @desde AND a.fecha_atencion < DATE_ADD(@hasta, INTERVAL 1 DAY)
 GROUP BY YEAR(a.fecha_atencion), MONTH(a.fecha_atencion), m.id_medicamento, m.nombre, m.unidad_medida
 ORDER BY anio, mes, m.nombre;
+
+-- ----------------------------------------------------------------------------
+-- Alter_tbl_apadrinamiento.sql
+-- ----------------------------------------------------------------------------
+USE db_santuario; 
+ 
+ALTER TABLE tbl_apadrinamiento
+  MODIFY COLUMN fecha_inicio DATE NULL,
+  ADD COLUMN estado_solicitud VARCHAR(12) NOT NULL DEFAULT 'APROBADA' AFTER observaciones,
+  ADD COLUMN fecha_solicitud DATETIME NULL AFTER estado_solicitud,
+  ADD COLUMN id_usuario_revisor INT NULL AFTER fecha_solicitud,
+  ADD COLUMN fecha_revision DATETIME NULL AFTER id_usuario_revisor,
+  ADD COLUMN motivo_rechazo VARCHAR(255) NULL AFTER fecha_revision,
+  ADD KEY ix_apadrinamiento_estado_solicitud (estado_solicitud, fecha_solicitud),
+  ADD KEY ix_apadrinamiento_usuario_revisor (id_usuario_revisor),
+  ADD CONSTRAINT fk_apadrinamiento_usuario_revisor
+    FOREIGN KEY (id_usuario_revisor) REFERENCES tbl_usuario(id_usuario),
+  ADD CONSTRAINT ck_apadrinamiento_estado_solicitud CHECK
+    (estado_solicitud IN ('PENDIENTE','APROBADA','RECHAZADA')),
+  ADD CONSTRAINT ck_apadrinamiento_inicio_segun_estado CHECK
+    ((estado_solicitud = 'APROBADA' AND fecha_inicio IS NOT NULL)
+      OR (estado_solicitud IN ('PENDIENTE','RECHAZADA')
+          AND fecha_inicio IS NULL AND fecha_fin IS NULL)),
+  ADD CONSTRAINT ck_apadrinamiento_motivo_rechazo CHECK
+    (estado_solicitud <> 'RECHAZADA' OR
+      (motivo_rechazo IS NOT NULL AND CHAR_LENGTH(TRIM(motivo_rechazo)) > 0));
+ 
+ALTER TABLE tbl_apadrinamiento
+  DROP INDEX uq_apadrinamiento_vigente,
+  MODIFY COLUMN id_animal_vigente INT GENERATED ALWAYS AS
+    (CASE WHEN fecha_fin IS NULL
+             AND estado_solicitud IN ('PENDIENTE','APROBADA')
+          THEN id_animal ELSE NULL END) STORED,
+  ADD UNIQUE KEY uq_apadrinamiento_vigente (id_padrino, id_animal_vigente);
+
+-- ----------------------------------------------------------------------------
+-- Alter_tbl_donacion.sql
+-- ----------------------------------------------------------------------------
+USE db_santuario; 
+
+ALTER TABLE tbl_donacion
+  ADD COLUMN estado_verificacion VARCHAR(15) NOT NULL DEFAULT 'CONFIRMADA' AFTER observaciones,
+  ADD COLUMN fecha_solicitud DATETIME NULL AFTER estado_verificacion,
+  ADD COLUMN comprobante_url VARCHAR(500) NULL AFTER fecha_solicitud,
+  ADD COLUMN id_usuario_revisor INT NULL AFTER comprobante_url,
+  ADD COLUMN fecha_revision DATETIME NULL AFTER id_usuario_revisor,
+  ADD COLUMN motivo_observacion VARCHAR(255) NULL AFTER fecha_revision,
+  ADD KEY ix_donacion_estado_fecha (estado_verificacion, fecha_solicitud),
+  ADD KEY ix_donacion_revisor (id_usuario_revisor),
+  ADD CONSTRAINT fk_donacion_revisor FOREIGN KEY (id_usuario_revisor)
+    REFERENCES tbl_usuario (id_usuario),
+  ADD CONSTRAINT ck_donacion_estado_verificacion CHECK
+    (estado_verificacion IN ('PENDIENTE', 'OBSERVADA', 'CONFIRMADA', 'RECHAZADA')),
+  ADD CONSTRAINT ck_donacion_motivo_observacion CHECK
+    (estado_verificacion NOT IN ('OBSERVADA','RECHAZADA') OR
+     (motivo_observacion IS NOT NULL AND CHAR_LENGTH(TRIM(motivo_observacion)) > 0));
+
+-- ----------------------------------------------------------------------------
+-- Agregar_periodo_aporte.sql
+-- ----------------------------------------------------------------------------
+USE db_santuario;
+ 
+SELECT COUNT(*) AS existe_periodo
+FROM information_schema.COLUMNS
+WHERE TABLE_SCHEMA = 'db_santuario'
+  AND TABLE_NAME = 'tbl_donacion'
+  AND COLUMN_NAME = 'periodo_aporte';
+ 
+ALTER TABLE tbl_donacion
+  ADD COLUMN periodo_aporte DATE NULL AFTER motivo_observacion,
+  ADD INDEX ix_donacion_apadrinamiento_periodo (id_apadrinamiento, periodo_aporte); 
+  
+SELECT id_donacion, id_apadrinamiento, estado_verificacion, periodo_aporte
+FROM tbl_donacion ORDER BY id_donacion DESC LIMIT 15;
+
+-- ----------------------------------------------------------------------------
+-- actualizar_usuarios_login.sql
+-- ----------------------------------------------------------------------------
+USE db_santuario;
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+UPDATE tbl_usuario u
+JOIN tbl_rol r ON r.id_rol = u.id_rol
+SET u.correo = 'veterinario@santuario.test',
+    u.clave_hash = '$2a$10$WQ1On/SADFq58PCXKx5jiOraVwRbQY3VJjovGbUMn.ZZPTvIS2Ici',
+    u.activo = 1
+WHERE u.correo IN ('elena.vargas@santuario.test', 'veterinario@santuario.test')
+  AND u.nombres = 'Elena Patricia'
+  AND u.apellidos = 'Vargas Mendoza'
+  AND r.nombre = 'Veterinario';
+
+UPDATE tbl_usuario u
+JOIN tbl_rol r ON r.id_rol = u.id_rol
+SET u.correo = 'cuidador@santuario.test',
+    u.clave_hash = '$2a$10$wogrpzHjBztNqsQwtMyXR.jo7lJPRyeiyLsOvvBiu62tfWJMjV/8W',
+    u.activo = 1
+WHERE u.correo IN ('luis.huaman@santuario.test', 'cuidador@santuario.test')
+  AND u.nombres = 'Luis Alberto'
+  AND u.apellidos = 'Huamán Salazar'
+  AND r.nombre = 'Cuidador';
+
+UPDATE tbl_usuario u
+JOIN tbl_rol r ON r.id_rol = u.id_rol
+SET u.correo = 'padrino@santuario.test',
+    u.clave_hash = '$2a$10$JXhgBIEczyriubPdJsybVuozmRSMtCeGjS5iAcud/C7g09D1Vt.I6',
+    u.activo = 1
+WHERE u.correo IN ('ana.torres@correo.test', 'padrino@santuario.test')
+  AND u.nombres = 'Ana Lucía'
+  AND u.apellidos = 'Torres Rojas'
+  AND r.nombre = 'Padrino';
+
+COMMIT;
+
+SELECT u.id_usuario, u.nombres, u.apellidos, u.correo, r.nombre AS rol,
+       u.activo, p.id_padrino
+FROM tbl_usuario u
+JOIN tbl_rol r ON r.id_rol = u.id_rol
+LEFT JOIN tbl_padrino p ON p.id_usuario = u.id_usuario
+WHERE u.correo IN ('veterinario@santuario.test', 'cuidador@santuario.test', 'padrino@santuario.test')
+ORDER BY u.id_usuario;
+

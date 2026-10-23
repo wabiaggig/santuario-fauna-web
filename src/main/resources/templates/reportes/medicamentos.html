@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reporte de consumo de medicamentos | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <link rel="stylesheet" th:href="@{/css/reportes.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <h1>Consumo y costo de medicamentos</h1>
+    <p class="descripcion">Cantidad usada en las atenciones médicas y su costo, por mes. El costo se calcula con el precio vigente al momento de cada atención.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form class="filtros no-imprimir" method="get" aria-label="Rango del reporte">
+        <div><label for="desde">Desde</label><input id="desde" name="desde" type="date" th:value="${desde}" th:max="${hoy}" required></div>
+        <div><label for="hasta">Hasta</label><input id="hasta" name="hasta" type="date" th:value="${hasta}" th:max="${hoy}" required></div>
+        <button class="boton" type="submit">Generar</button>
+        <button class="boton-secundario" type="button" onclick="window.print()">Imprimir</button>
+    </form>
+    <p class="periodo">Periodo: <strong th:text="|${#temporals.format(desde, 'dd/MM/yyyy')} - ${#temporals.format(hasta, 'dd/MM/yyyy')}|"></strong></p>
+
+    <th:block th:if="${reporte != null}">
+        <div class="tarjetas">
+            <div class="tarjeta destacada"><span class="tarjeta-titulo">Costo total</span><span class="tarjeta-valor" th:text="|S/ ${#numbers.formatDecimal(reporte.costoTotal, 1, 'COMMA', 2, 'POINT')}|">S/ 0.00</span></div>
+            <div class="tarjeta"><span class="tarjeta-titulo">Medicamentos distintos usados</span><span class="tarjeta-valor" th:text="${#lists.size(reporte.porMedicamento)}">0</span></div>
+            <div class="tarjeta"><span class="tarjeta-titulo">Mayor costo</span><span class="tarjeta-valor chica" th:text="${#lists.isEmpty(reporte.porMedicamento) ? '-' : reporte.porMedicamento[0].medicamento}">-</span></div>
+        </div>
+
+        <section class="grafico" aria-label="Gráfico de costo de medicamentos por mes">
+            <canvas id="grafico" height="110" role="img" aria-label="Barras del costo de medicamentos por mes"></canvas>
+        </section>
+
+        <h2>Totales por medicamento</h2>
+        <p th:if="${#lists.isEmpty(reporte.porMedicamento)}">No se usaron medicamentos en este periodo.</p>
+        <div th:unless="${#lists.isEmpty(reporte.porMedicamento)}" class="tabla-scroll" role="region" aria-label="Totales por medicamento" tabindex="0"><table>
+            <thead><tr><th scope="col">Medicamento</th><th scope="col" class="numero">Cantidad</th><th scope="col" class="numero">Costo</th></tr></thead>
+            <tbody><tr th:each="t : ${reporte.porMedicamento}">
+                <td th:text="${t.medicamento}"></td>
+                <td class="numero" th:text="|${#numbers.formatDecimal(t.cantidad, 1, 'COMMA', 2, 'POINT')} ${t.unidadMedida}|"></td>
+                <td class="numero" th:text="|S/ ${#numbers.formatDecimal(t.costo, 1, 'COMMA', 2, 'POINT')}|"></td>
+            </tr></tbody>
+            <tfoot><tr><th scope="row" colspan="2">Total</th><td class="numero" th:text="|S/ ${#numbers.formatDecimal(reporte.costoTotal, 1, 'COMMA', 2, 'POINT')}|"></td></tr></tfoot>
+        </table></div>
+
+        <h2>Detalle por mes</h2>
+        <p th:if="${#lists.isEmpty(reporte.detalle)}">Sin consumos registrados en el periodo.</p>
+        <div th:unless="${#lists.isEmpty(reporte.detalle)}" class="tabla-scroll" role="region" aria-label="Detalle mensual de consumo" tabindex="0"><table>
+            <thead><tr><th scope="col">Mes</th><th scope="col">Medicamento</th><th scope="col" class="numero">Cantidad</th><th scope="col" class="numero">Costo</th></tr></thead>
+            <tbody><tr th:each="f : ${reporte.detalle}">
+                <td th:text="${f.mes}"></td>
+                <td><span class="nombre-animal" th:text="${f.medicamento}"></span><span class="especie" th:text="${f.presentacion}"></span></td>
+                <td class="numero" th:text="|${#numbers.formatDecimal(f.cantidad, 1, 'COMMA', 2, 'POINT')} ${f.unidadMedida}|"></td>
+                <td class="numero" th:text="|S/ ${#numbers.formatDecimal(f.costo, 1, 'COMMA', 2, 'POINT')}|"></td>
+            </tr></tbody>
+        </table></div>
+    </th:block>
+</main>
+<script th:if="${reporte != null}" th:inline="javascript">
+    const meses = /*[[${reporte.porMes.![mes]}]]*/ [];
+    const costos = /*[[${reporte.porMes.![costo]}]]*/ [];
+    if (window.Chart) {
+        new Chart(document.getElementById('grafico'), {
+            type: 'bar',
+            data: { labels: meses, datasets: [
+                { label: 'Costo (S/)', data: costos.map(Number), backgroundColor: '#31563d', borderRadius: 4 }
+            ] },
+            options: { responsive: true, plugins: { legend: { display: false },
+                tooltip: { callbacks: { label: (c) => 'S/ ' + c.parsed.y.toFixed(2) } } },
+                scales: { y: { beginAtZero: true, ticks: { callback: (v) => 'S/ ' + v } } } }
+        });
+    }
+</script>
+</body>
+</html>

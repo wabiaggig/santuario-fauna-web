@@ -6,10 +6,11 @@
     <title>Alojamientos vigentes | Santuario Río Verde</title>
     <link rel="stylesheet" th:href="@{/css/acceso.css}">
     <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body>
 <a class="saltar" href="#contenido">Ir al contenido</a>
-<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 <main id="contenido" class="gestion">
     <div class="titulo-acciones"><div><h1>Alojamientos vigentes</h1><p class="descripcion">Revisa dónde está cada animal y registra sus cambios de zona conservando el historial.</p></div><a class="boton" th:href="@{/zonas}">Consultar cupos</a></div>
     <div th:replace="~{animales/fragmentos :: avisos}"></div>

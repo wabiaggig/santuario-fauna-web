@@ -10,6 +10,10 @@ import com.cibertec.santuario.controller.AnimalController;
 import com.cibertec.santuario.controller.ZonaController;
 import com.cibertec.santuario.controller.AlojamientoController;
 import com.cibertec.santuario.controller.CuarentenaController;
+import com.cibertec.santuario.controller.AtencionMedicaController;
+import com.cibertec.santuario.controller.MedicamentoController;
+import com.cibertec.santuario.controller.LiberacionController;
+import com.cibertec.santuario.controller.ReporteController;
 
 
 @Component
@@ -34,6 +38,31 @@ public class AutenticacionInterceptor implements HandlerInterceptor {
                 && !"Cuidador".equals(session.getAttribute("nombreRol")) && !veterinario) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return false;
+        }
+        if (ReporteController.class.isAssignableFrom(controlador)) {
+            String rol = (String) session.getAttribute("nombreRol");
+            boolean permitido = (ruta.startsWith("/reportes/liberaciones") && "Cuidador".equals(rol))
+                    || (ruta.startsWith("/reportes/medicamentos") && "Veterinario".equals(rol));
+            if (!permitido) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return false;
+            }
+        }
+        // Modulo clinico: solo el veterinario y con token en cada envio.
+        if (AtencionMedicaController.class.isAssignableFrom(controlador)
+                || MedicamentoController.class.isAssignableFrom(controlador)
+                || LiberacionController.class.isAssignableFrom(controlador)) {
+            if (!veterinario) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return false;
+            }
+            if (!consulta) {
+                String token = request.getParameter("_csrf");
+                if (token == null || !token.equals(session.getAttribute("csrfToken"))) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return false;
+                }
+            }
         }
         if (AnimalController.class.isAssignableFrom(controlador)
                 || ZonaController.class.isAssignableFrom(controlador)

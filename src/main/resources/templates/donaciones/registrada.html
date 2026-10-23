@@ -7,15 +7,11 @@
 	<title>Aporte registrado | Santuario Río Verde</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 
 <body class="bg-brand-light min-h-screen text-gray-900">
-	<header class="bg-white border-b">
-		<nav class="max-w-4xl mx-auto flex justify-between items-center px-5 py-5 gap-4">
-			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
-			<a th:href="@{/panel}" class="text-brand-leaf font-semibold">← Mi panel</a>
-		</nav>
-	</header>
+	<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 	<main class="max-w-2xl mx-auto px-5 py-12">
 		<section class="bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
 			<p class="uppercase text-brand-leaf font-bold tracking-widest text-xs mb-3">Registro completado</p>

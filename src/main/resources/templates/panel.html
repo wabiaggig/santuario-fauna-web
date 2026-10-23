@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mi espacio | Santuario Río Verde</title>
     <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body>
-    <header class="cabecera">
-        <a class="marca" th:href="@{/}">Santuario <span>Río Verde</span></a>
-        <form th:action="@{/cerrar-sesion}" method="post">
-            <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
-            <button class="enlace-boton" type="submit">Cerrar sesión</button>
-        </form>
-    </header>
+    <header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
     <main class="panel">
         <h1>Bienvenido, <span th:text="${session.fullName}">usuario</span></h1>
         <p class="descripcion">Tu rol es <strong th:text="${session.nombreRol}">rol</strong>.</p>
@@ -54,15 +49,28 @@
             <a class="boton" th:href="@{/zonas}">Gestionar zonas</a> 
 			<a class="boton" th:href="@{/alojamientos}">Ver alojamientos vigentes</a>
         </section>
+        <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
+            <h2>Reportes</h2>
+            <p>Compara por trimestre cuántos animales ingresan y cuántos vuelven a su hábitat.</p>
+            <a class="boton" th:href="@{/reportes/liberaciones}">Reporte de liberaciones sobre ingresos</a>
+        </section>
         <section class="opcion" th:if="${session.nombreRol == 'Cuidador' or session.nombreRol == 'Veterinario'}">
             <h2>Animales en cuarentena</h2>
             <p>Consulta la zona actual y los días en cuarentena de cada animal. Filtra por especie y zona.</p>
             <a class="boton" th:href="@{/cuarentenas}">Consultar cuarentenas</a>
         </section>
         <section class="opcion" th:if="${session.nombreRol == 'Veterinario'}">
-            <h2>Cuidado veterinario</h2>
-            <p>Tu cuenta de veterinario está habilitada. El módulo de seguimiento y atención médica se incorporará a este espacio.</p>
-        </section>
+           	<h2>Cuidado veterinario</h2>
+			<p>Registra y gestiona las consultas, diagnósticos y tratamientos médicos de los animales del santuario.</p>
+			<br>
+			<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+			    <a class="boton" style="margin: 0;" th:href="@{/atenciones/nuevo}">Registrar atención médica</a>
+			    <a class="boton" style="margin: 0;" th:href="@{/atenciones}">Historial de atenciones</a>
+			    <a class="boton" style="margin: 0;" th:href="@{/medicamentos}">Inventario de medicamentos</a>
+			    <a class="boton" style="margin: 0;" th:href="@{/liberaciones}">Liberaciones</a>
+			    <a class="boton" style="margin: 0;" th:href="@{/reportes/medicamentos}">Reporte de consumo de medicamentos</a>
+			</div>
+			 </section>
         <a class="volver" th:href="@{/}">Volver a la portada</a>
     </main>
 </body>

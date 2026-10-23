@@ -6,10 +6,11 @@
     <title th:text="|Trasladar a ${actual.animal.nombre} · Santuario Río Verde|"></title>
     <link rel="stylesheet" th:href="@{/css/acceso.css}">
     <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body>
 <a class="saltar" href="#contenido">Ir al contenido</a>
-<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 <main id="contenido" class="gestion formulario-animal">
     <a th:href="@{/animales/{id}(id=${actual.animal.idAnimal})}">Volver a la ficha sin trasladar</a>
     <h1 th:text="|Trasladar a ${actual.animal.nombre}|"></h1>

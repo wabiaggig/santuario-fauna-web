@@ -5,6 +5,7 @@ import java.util.Map;
 import com.cibertec.santuario.dto.AnimalForm;
 import com.cibertec.santuario.model.Animal;
 import com.cibertec.santuario.service.AnimalService;
+import com.cibertec.santuario.service.AtencionMedicaService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class AnimalController {
     private final AnimalService animalService;
+    private final AtencionMedicaService atencionMedicaService;
 
     @InitBinder("form")
     public void configurarFormulario(WebDataBinder binder) {
@@ -74,6 +76,7 @@ public class AnimalController {
     public String detalle(@PathVariable Integer id, Model model) {
         model.addAttribute("animal", animalService.obtener(id));
         model.addAttribute("alojamientos", animalService.listarAlojamientos(id));
+        model.addAttribute("atenciones", atencionMedicaService.listarPorAnimal(id));
         return "animales/detalle";
     }
 

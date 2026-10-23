@@ -7,20 +7,11 @@
 	<title>Registrar donación | Santuario Río Verde</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 
 <body class="bg-brand-light min-h-screen text-gray-900">
-	<header class="bg-white border-b">
-		<nav class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-4 px-5 py-5">
-			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
-			<div class="flex flex-wrap gap-4 text-sm font-semibold text-brand-leaf">
-				<a th:href="@{/panel}" class="hover:underline">← Mi panel</a>
-				<a th:href="@{/apadrinamientos/mis-solicitudes}" class="hover:underline">Mis apadrinamientos</a>
-				<a th:href="@{/donaciones/control-mensual}" class="hover:underline">Mi control mensual</a>
-				<a th:href="@{/}" class="hover:underline">Volver a la portada</a>
-			</div>
-		</nav>
-	</header>
+	<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 	<main class="max-w-3xl mx-auto px-5 py-10">
 		<p class="text-brand-leaf text-xs tracking-widest uppercase font-bold mb-3">Apoyo ciudadano</p>
 		<h1 class="text-3xl font-bold mb-3">Registrar donación</h1>

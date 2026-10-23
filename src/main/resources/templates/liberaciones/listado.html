@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Liberaciones | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <style>
+        .impacto { margin-top: 24px; padding: 20px 24px; background: #fff; border: 1px solid #cbd8c7; border-left: 4px solid #4a7c59; border-radius: 8px; }
+        .impacto h2 { font-size: 1.15rem; margin: 0 0 12px; }
+        .impacto ul { margin: 0; padding-left: 20px; }
+        .impacto li { margin: 6px 0; }
+        .impacto .advertencia { color: #842c25; }
+    </style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <div class="titulo-acciones"><div><h1>Liberaciones</h1><p class="descripcion">Animales que completaron su rehabilitación y volvieron a su hábitat.</p></div><a class="boton" th:href="@{/liberaciones/nueva}">Registrar liberación</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <p class="resultado" role="status"><span th:text="${#lists.size(liberaciones)}">0</span> liberaciones registradas</p>
+    <div th:if="${#lists.isEmpty(liberaciones)}" class="vacio"><h2>Aún no hay liberaciones</h2><p>Cuando un animal saludable vuelva a su hábitat, regístralo aquí.</p></div>
+    <p th:unless="${#lists.isEmpty(liberaciones)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:unless="${#lists.isEmpty(liberaciones)}" class="tabla-scroll" role="region" aria-label="Liberaciones registradas" tabindex="0"><table>
+        <caption class="solo-lector">Liberaciones registradas, de la más reciente a la más antigua</caption>
+        <thead><tr><th scope="col">Fecha</th><th scope="col">Animal</th><th scope="col">Lugar</th><th scope="col">Responsable</th><th scope="col">Observaciones</th></tr></thead>
+        <tbody><tr th:each="l : ${liberaciones}">
+            <td class="fecha" th:text="${#temporals.format(l.fechaLiberacion, 'dd/MM/yyyy')}"></td>
+            <td><a class="nombre-animal" th:href="@{/animales/{id}(id=${l.animal.idAnimal})}" th:text="${l.animal.nombre}"></a><span class="especie" th:text="|${l.animal.codigo} · ${l.animal.especie.nombreComun}|"></span></td>
+            <td th:text="${l.lugar}"></td>
+            <td th:text="${l.responsable.fullName}"></td>
+            <td th:text="${#strings.isEmpty(l.observaciones) ? '-' : #strings.abbreviate(l.observaciones, 120)}"></td>
+        </tr></tbody>
+    </table></div>
+</main>
+</body>
+</html>

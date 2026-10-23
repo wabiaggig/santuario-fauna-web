@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registrar liberación | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <style>
+        .impacto { margin-top: 24px; padding: 20px 24px; background: #fff; border: 1px solid #cbd8c7; border-left: 4px solid #4a7c59; border-radius: 8px; }
+        .impacto h2 { font-size: 1.15rem; margin: 0 0 12px; }
+        .impacto ul { margin: 0; padding-left: 20px; }
+        .impacto li { margin: 6px 0; }
+        .impacto .advertencia { color: #842c25; }
+    </style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion formulario-animal">
+    <a th:href="@{/liberaciones}">Volver sin guardar</a>
+    <h1>Registrar liberación</h1>
+    <p class="descripcion">Al confirmar, el animal pasa a Liberado: se cierra su cuarentena (si sigue abierta) y su alojamiento, y se cierran sus apadrinamientos.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+
+    <p th:if="${#lists.isEmpty(animales)}" class="aviso">No hay animales albergados en estado Saludable. Un animal se puede liberar cuando una atención médica lo deja como saludable.</p>
+
+    <form th:action="@{/liberaciones/registrar}" th:object="${form}" method="post">
+        <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+        <p class="ayuda">Los campos con * son obligatorios.</p>
+        <fieldset><legend>Datos de la liberación</legend><div class="campos">
+            <div class="ancho-completo">
+                <label for="idAnimal">Animal *</label>
+                <select id="idAnimal" th:field="*{idAnimal}" required>
+                    <option value="">Selecciona un animal</option>
+                    <option th:each="a : ${animales}" th:value="${a.idAnimal}" th:text="|${a.codigo} · ${a.nombre} (${a.especie.nombreComun})|"></option>
+                </select>
+                <small>Solo animales albergados y en estado Saludable. Al elegirlo verás qué se cerrará.</small>
+            </div>
+            <div><label for="fechaLiberacion">Fecha de liberación *</label><input id="fechaLiberacion" type="date" th:field="*{fechaLiberacion}" th:max="${hoy}" required></div>
+            <div><label for="lugar">Lugar *</label><input id="lugar" th:field="*{lugar}" maxlength="150" required aria-describedby="ayuda-lugar"><small id="ayuda-lugar">Ejemplo: Área de reinserción Río Verde, Tambopata.</small></div>
+            <div class="ancho-completo"><label for="observaciones">Observaciones</label><textarea id="observaciones" th:field="*{observaciones}" rows="3" maxlength="2000"></textarea><small>Opcional. Acta interna, condiciones de la liberación, etc.</small></div>
+        </div></fieldset>
+
+        <section th:if="${impacto != null}" class="impacto" aria-labelledby="titulo-impacto">
+            <h2 id="titulo-impacto" th:text="|Al liberar a ${impacto.animal.nombre} se hará lo siguiente|"></h2>
+            <ul>
+                <li th:if="${impacto.animal.fechaInicioCuarentena != null and impacto.animal.fechaFinCuarentena == null}">Se cerrará su cuarentena (abierta desde el <span th:text="${#temporals.format(impacto.animal.fechaInicioCuarentena, 'dd/MM/yyyy')}"></span>).</li>
+                <li th:if="${impacto.alojamiento != null}">Se cerrará su alojamiento en <strong th:text="${impacto.alojamiento.zona.nombre}"></strong> y se liberará ese cupo.</li>
+                <li th:if="${impacto.alojamiento == null}">No tiene alojamiento vigente.</li>
+                <li th:if="${#lists.isEmpty(impacto.apadrinamientos)}">No tiene apadrinamientos abiertos.</li>
+                <li th:each="ap : ${impacto.apadrinamientos}" class="advertencia">
+                    <th:block th:if="${ap.estadoSolicitud == 'APROBADA'}">Se cerrará el apadrinamiento de <strong th:text="|${ap.padrino.nombres} ${ap.padrino.apellidos}|"></strong>.</th:block>
+                    <th:block th:unless="${ap.estadoSolicitud == 'APROBADA'}">Se rechazará la solicitud pendiente de <strong th:text="|${ap.padrino.nombres} ${ap.padrino.apellidos}|"></strong> (motivo: animal liberado).</th:block>
+                </li>
+                <li>El animal quedará en estado Liberado y ya no aparecerá en atenciones, traslados ni en el catálogo de apadrinamiento.</li>
+            </ul>
+        </section>
+
+        <div class="pie-formulario">
+            <button class="boton" type="submit" th:disabled="${#lists.isEmpty(animales)}">Confirmar liberación</button>
+            <a th:href="@{/liberaciones}">Cancelar</a>
+        </div>
+    </form>
+</main>
+<script th:inline="javascript">
+document.getElementById('idAnimal').addEventListener('change', function () {
+    const base = /*[[@{/liberaciones/nueva}]]*/ '/liberaciones/nueva';
+    window.location.href = this.value ? base + '?idAnimal=' + encodeURIComponent(this.value) : base;
+});
+</script>
+</body>
+</html>

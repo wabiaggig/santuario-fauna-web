@@ -6,14 +6,15 @@
     <title th:text="|${animal.nombre} · Ficha · Santuario Río Verde|"></title>
     <link rel="stylesheet" th:href="@{/css/acceso.css}">
     <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body>
 <a class="saltar" href="#contenido">Ir al contenido</a>
-<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 <main id="contenido" class="gestion">
     <a th:if="${session.nombreRol == 'Cuidador'}" th:href="@{/animales}">Volver a animales</a>
     <a th:if="${session.nombreRol == 'Veterinario'}" th:href="@{/cuarentenas}">Volver a cuarentenas</a>
-    <div class="titulo-acciones"><div><h1 th:text="${animal.nombre}"></h1><p class="descripcion"><span class="codigo" th:text="${animal.codigo}"></span> · <span th:text="${animal.especie.nombreComun}"></span></p></div><a th:if="${session.nombreRol == 'Cuidador' and animal.activo}" class="boton" th:href="@{/animales/{id}/editar(id=${animal.idAnimal})}">Editar ficha</a></div>
+    <div class="titulo-acciones"><div><h1 th:text="${animal.nombre}"></h1><p class="descripcion"><span class="codigo" th:text="${animal.codigo}"></span> · <span th:text="${animal.especie.nombreComun}"></span></p></div><a th:if="${session.nombreRol == 'Cuidador' and animal.activo}" class="boton" th:href="@{/animales/{id}/editar(id=${animal.idAnimal})}">Editar ficha</a><a th:if="${session.nombreRol == 'Veterinario' and animal.activo and animal.estado == 'A' and animal.estadoSalud == 'S'}" class="boton" th:href="@{/liberaciones/nueva(idAnimal=${animal.idAnimal})}">Registrar liberación</a></div>
     <div th:replace="~{animales/fragmentos :: avisos}"></div>
     <p th:unless="${animal.activo}" class="aviso">Esta ficha está dada de baja. Se conserva para consultar sus antecedentes.</p>
     <section class="datos-ficha" aria-labelledby="datos"><h2 id="datos">Datos del animal</h2>
@@ -41,6 +42,22 @@
             <caption class="solo-lector">Zonas ocupadas por el animal, de la más reciente a la más antigua</caption>
             <thead><tr><th scope="col">Zona</th><th scope="col">Entrada</th><th scope="col">Salida</th></tr></thead>
             <tbody><tr th:each="alojamiento : ${alojamientos}"><td th:text="${alojamiento.zona.nombre}"></td><td class="fecha" th:text="${#temporals.format(alojamiento.fechaEntrada, 'dd/MM/yyyy HH:mm')}"></td><td class="fecha" th:text="${alojamiento.fechaSalida == null ? 'Alojamiento vigente' : #temporals.format(alojamiento.fechaSalida, 'dd/MM/yyyy HH:mm')}"></td></tr></tbody>
+        </table></div>
+    </section>
+    <section class="historial" aria-labelledby="clinico"><h2 id="clinico">Historial clínico</h2>
+        <p th:if="${session.nombreRol == 'Veterinario' and animal.activo and animal.estado == 'A'}"><a th:href="@{/atenciones/nuevo}">Registrar una atención médica</a></p>
+        <p th:if="${#lists.isEmpty(atenciones)}">Este animal no tiene atenciones médicas registradas.</p>
+        <p th:unless="${#lists.isEmpty(atenciones)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+        <div th:unless="${#lists.isEmpty(atenciones)}" class="tabla-scroll" role="region" aria-label="Historial clínico" tabindex="0"><table>
+            <caption class="solo-lector">Atenciones médicas del animal, de la más reciente a la más antigua</caption>
+            <thead><tr><th scope="col">Fecha</th><th scope="col">Diagnóstico y tratamiento</th><th scope="col">Salud</th><th scope="col">Medicamentos</th><th scope="col">Veterinario</th></tr></thead>
+            <tbody><tr th:each="at : ${atenciones}">
+                <td class="fecha" th:text="${#temporals.format(at.fechaAtencion, 'dd/MM/yyyy HH:mm')}"></td>
+                <td><span class="nombre-animal" th:text="${at.diagnostico}"></span><span class="especie" th:text="${at.tratamiento}"></span></td>
+                <td th:text="|${salud[at.estadoSaludAnterior]} → ${salud[at.estadoSaludResultante]}|"></td>
+                <td><span th:if="${#lists.isEmpty(at.detalles)}">—</span><th:block th:each="d, it : ${at.detalles}"><span th:text="|${d.medicamento.nombre}: ${#numbers.formatDecimal(d.cantidad, 1, 'COMMA', 2, 'POINT')} ${d.medicamento.unidadMedida}|"></span><br th:unless="${it.last}"></th:block></td>
+                <td th:text="${at.veterinario.fullName}"></td>
+            </tr></tbody>
         </table></div>
     </section>
     <section th:if="${session.nombreRol == 'Cuidador'}" class="administracion" aria-labelledby="ficha"><h2 id="ficha">Administración de la ficha</h2>

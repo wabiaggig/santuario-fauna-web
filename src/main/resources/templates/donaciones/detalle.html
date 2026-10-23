@@ -7,15 +7,11 @@
 	<title>Detalle de donación | Santuario Río Verde</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 
 <body class="bg-brand-light min-h-screen text-gray-900">
-	<header class="bg-white border-b">
-		<nav class="max-w-4xl mx-auto px-5 py-5 flex justify-between gap-4 items-center">
-			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
-			<a th:href="@{/donaciones/pendientes}" class="text-brand-leaf font-semibold">← Donaciones pendientes</a>
-		</nav>
-	</header>
+	<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 	<main class="max-w-3xl mx-auto px-5 py-12">
 		<p class="text-brand-leaf uppercase tracking-widest font-bold text-xs mb-3">Cuidador · Verificación manual</p>
 		<h1 class="text-3xl font-bold mb-6">Detalle del aporte <span th:text="${'#' + donacion.id}">#1</span></h1>
