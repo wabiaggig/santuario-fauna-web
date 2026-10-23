@@ -6,9 +6,10 @@
     <title>Confirmar baja | Santuario Río Verde</title>
     <link rel="stylesheet" th:href="@{/css/acceso.css}">
     <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body>
-<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 <main class="gestion confirmacion">
     <h1>Dar de baja la ficha</h1>
     <p>Vas a dar de baja la ficha de <strong th:text="${animal.nombre}"></strong>, código <strong th:text="${animal.codigo}"></strong>.</p>

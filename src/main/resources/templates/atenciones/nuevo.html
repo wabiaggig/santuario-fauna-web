@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registrar atención médica | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <style>
+        .tabla-medicamentos td { padding: 10px 12px; }
+        .tabla-medicamentos .col-cantidad { width: 170px; }
+        .tabla-medicamentos .col-accion { width: 110px; }
+        .tabla-medicamentos .unidad { margin-top: 4px; }
+        .agregar-fila { margin-top: 16px; }
+        .boton-secundario { padding: 10px 16px; font: inherit; color: var(--hoja-oscura); background: #fff; border: 1px solid var(--hoja-oscura); border-radius: 6px; cursor: pointer; }
+        .boton-quitar { padding: 8px 0; font: inherit; color: #8a3329; background: none; border: 0; text-decoration: underline; cursor: pointer; }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion formulario-animal">
+    <a th:href="@{/panel}">Volver sin guardar</a>
+    <h1>Registrar atención médica</h1>
+    <p class="descripcion">Registra el diagnóstico y los medicamentos usados. Al guardar se descuenta el stock y se actualiza el estado de salud del animal.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+
+    <p th:if="${#lists.isEmpty(animales)}" class="aviso">No hay animales albergados para atender.</p>
+
+    <form th:action="@{/atenciones/registrar}" th:object="${form}" method="post" id="form-atencion">
+        <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+        <p class="ayuda">Los campos con * son obligatorios.</p>
+
+        <fieldset><legend>Datos de la atención</legend><div class="campos">
+            <div>
+                <label for="idAnimal">Animal *</label>
+                <select id="idAnimal" th:field="*{idAnimal}" required>
+                    <option value="">Selecciona un animal</option>
+                    <option th:each="a : ${animales}" th:value="${a.idAnimal}"
+                            th:text="|${a.codigo} · ${a.nombre} (${a.especie.nombreComun}) - ${estadosSalud.get(a.estadoSalud)}|"></option>
+                </select>
+                <small>Solo animales albergados. El estado entre paréntesis es el actual.</small>
+            </div>
+            <div>
+                <label for="fechaAtencion">Fecha de atención *</label>
+                <input id="fechaAtencion" type="date" th:field="*{fechaAtencion}" th:max="${hoy}" required>
+            </div>
+            <div class="ancho-completo">
+                <label for="diagnostico">Diagnóstico *</label>
+                <textarea id="diagnostico" th:field="*{diagnostico}" rows="3" required></textarea>
+            </div>
+            <div class="ancho-completo">
+                <label for="tratamiento">Tratamiento *</label>
+                <textarea id="tratamiento" th:field="*{tratamiento}" rows="3" required></textarea>
+            </div>
+            <div>
+                <label for="estadoSaludResultante">Estado de salud resultante *</label>
+                <select id="estadoSaludResultante" th:field="*{estadoSaludResultante}" required>
+                    <option value="">Selecciona un estado</option>
+                    <option th:each="codigo : ${ {'E', 'T', 'S'} }" th:value="${codigo}" th:text="${estadosSalud.get(codigo)}"></option>
+                </select>
+            </div>
+            <div class="ancho-completo">
+                <label for="observaciones">Observaciones</label>
+                <textarea id="observaciones" th:field="*{observaciones}" rows="2"></textarea>
+                <small>Opcional.</small>
+            </div>
+        </div></fieldset>
+
+        <fieldset><legend>Medicamentos utilizados</legend>
+            <p class="descripcion">Opcional. Agrega una fila por medicamento; no repitas el mismo medicamento. ¿Falta alguno o no hay stock? Revisa el <a th:href="@{/medicamentos}">inventario de medicamentos</a>.</p>
+            <div class="tabla-scroll" style="margin-top: 16px;">
+                <table class="tabla-medicamentos">
+                    <thead><tr><th scope="col">Medicamento</th><th scope="col" class="col-cantidad">Cantidad</th><th scope="col" class="col-accion"><span class="solo-lector">Acción</span></th></tr></thead>
+                    <tbody id="filas-medicamentos">
+                        <tr th:each="d, it : *{detalles}" class="fila-medicamento">
+                            <td>
+                                <select class="sel-medicamento" th:name="|detalles[${it.index}].idMedicamento|" aria-label="Medicamento">
+                                    <option value="">Selecciona un medicamento</option>
+                                    <option th:each="m : ${medicamentos}" th:value="${m.idMedicamento}"
+                                            th:selected="${d.idMedicamento == m.idMedicamento}"
+                                            th:attr="data-unidad=${m.unidadMedida},data-stock=${m.stockActual}"
+                                            th:text="|${m.nombre} - ${m.presentacion} (stock: ${m.stockActual} ${m.unidadMedida})|"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="inp-cantidad" type="number" min="0.01" step="0.01" th:name="|detalles[${it.index}].cantidad|" th:value="${d.cantidad}" aria-label="Cantidad">
+                                <small class="unidad"></small>
+                            </td>
+                            <td><button type="button" class="boton-quitar">Quitar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="boton-secundario agregar-fila" id="agregar-fila">+ Agregar medicamento</button>
+        </fieldset>
+
+        <div class="pie-formulario">
+            <button class="boton" type="submit" th:disabled="${#lists.isEmpty(animales)}">Guardar atención</button>
+            <a th:href="@{/panel}">Cancelar</a>
+        </div>
+    </form>
+
+    <template id="plantilla-fila">
+        <tr class="fila-medicamento">
+            <td>
+                <select class="sel-medicamento" aria-label="Medicamento">
+                    <option value="">Selecciona un medicamento</option>
+                    <option th:each="m : ${medicamentos}" th:value="${m.idMedicamento}"
+                            th:attr="data-unidad=${m.unidadMedida},data-stock=${m.stockActual}"
+                            th:text="|${m.nombre} - ${m.presentacion} (stock: ${m.stockActual} ${m.unidadMedida})|"></option>
+                </select>
+            </td>
+            <td>
+                <input class="inp-cantidad" type="number" min="0.01" step="0.01" aria-label="Cantidad">
+                <small class="unidad"></small>
+            </td>
+            <td><button type="button" class="boton-quitar">Quitar</button></td>
+        </tr>
+    </template>
+</main>
+<script>
+(function () {
+    const cuerpo = document.getElementById('filas-medicamentos');
+    const plantilla = document.getElementById('plantilla-fila');
+
+    function reindexar() {
+        cuerpo.querySelectorAll('.fila-medicamento').forEach(function (fila, i) {
+            fila.querySelector('.sel-medicamento').name = 'detalles[' + i + '].idMedicamento';
+            fila.querySelector('.inp-cantidad').name = 'detalles[' + i + '].cantidad';
+        });
+    }
+
+    function actualizarUnidad(fila) {
+        const opcion = fila.querySelector('.sel-medicamento').selectedOptions[0];
+        const cantidad = fila.querySelector('.inp-cantidad');
+        const unidad = fila.querySelector('.unidad');
+        if (opcion && opcion.value) {
+            unidad.textContent = 'en ' + opcion.dataset.unidad + ' · máx. ' + opcion.dataset.stock;
+            cantidad.max = opcion.dataset.stock;
+            cantidad.required = true;
+        } else {
+            unidad.textContent = '';
+            cantidad.removeAttribute('max');
+            cantidad.required = false;
+        }
+    }
+
+    function agregarFila() {
+        cuerpo.appendChild(plantilla.content.cloneNode(true));
+        reindexar();
+    }
+
+    document.getElementById('agregar-fila').addEventListener('click', agregarFila);
+
+    cuerpo.addEventListener('click', function (e) {
+        if (e.target.classList.contains('boton-quitar')) {
+            e.target.closest('tr').remove();
+            reindexar();
+        }
+    });
+
+    cuerpo.addEventListener('change', function (e) {
+        if (e.target.classList.contains('sel-medicamento')) {
+            actualizarUnidad(e.target.closest('tr'));
+        }
+    });
+
+    document.getElementById('form-atencion').addEventListener('submit', function (e) {
+        const elegidos = Array.from(cuerpo.querySelectorAll('.sel-medicamento'))
+            .map(function (s) { return s.value; }).filter(Boolean);
+        if (new Set(elegidos).size !== elegidos.length) {
+            e.preventDefault();
+            alert('Hay un medicamento repetido. Usa una sola fila por medicamento.');
+        }
+        reindexar();
+    });
+
+    if (!cuerpo.querySelector('.fila-medicamento')) {
+        agregarFila();
+    }
+    cuerpo.querySelectorAll('.fila-medicamento').forEach(actualizarUnidad);
+})();
+</script>
+</body>
+</html>

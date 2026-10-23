@@ -29,6 +29,10 @@ public interface ApadrinamientoRepository extends JpaRepository<Apadrinamiento, 
     boolean existsByPadrino_IdPadrinoAndAnimal_IdAnimalAndFechaFinIsNullAndEstadoSolicitudIn(
             Integer idPadrino, Integer idAnimal, Collection<String> estados);
  
+    @EntityGraph(attributePaths = {"padrino"})
+    List<Apadrinamiento> findByAnimal_IdAnimalAndFechaFinIsNullAndEstadoSolicitudIn(
+            Integer idAnimal, Collection<String> estados);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select a from Apadrinamiento a where a.idApadrinamiento = :id")
     Optional<Apadrinamiento> bloquearParaRevision(@Param("id") Integer id);

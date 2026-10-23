@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${medicamento.nombre} · Santuario Río Verde|"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <style>
+        .etiqueta-stock { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: #842c25; background: #fff0ed; }
+        .numero { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+    </style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <a th:href="@{/medicamentos}">Volver a medicamentos</a>
+    <div class="titulo-acciones"><div><h1 th:text="${medicamento.nombre}"></h1><p class="descripcion" th:text="${medicamento.presentacion}"></p></div><a th:if="${medicamento.activo}" class="boton" th:href="@{/medicamentos/{id}/editar(id=${medicamento.idMedicamento})}">Editar medicamento</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <p th:if="${stockBajo and medicamento.activo}" class="aviso error">El stock está en o por debajo del mínimo. Conviene reponerlo.</p>
+
+    <section class="datos-ficha" aria-labelledby="datos"><h2 id="datos">Inventario</h2><dl>
+        <div><dt>Stock actual</dt><dd th:text="|${#numbers.formatDecimal(medicamento.stockActual, 1, 'COMMA', 2, 'POINT')} ${medicamento.unidadMedida}|"></dd></div>
+        <div><dt>Stock mínimo</dt><dd th:text="|${#numbers.formatDecimal(medicamento.stockMinimo, 1, 'COMMA', 2, 'POINT')} ${medicamento.unidadMedida}|"></dd></div>
+        <div><dt>Costo unitario</dt><dd th:text="|S/ ${#numbers.formatDecimal(medicamento.costoUnitario, 1, 'COMMA', 2, 'POINT')} por ${medicamento.unidadMedida}|"></dd></div>
+        <div><dt>Estado</dt><dd th:text="${medicamento.activo ? 'Activo' : 'Dado de baja'}"></dd></div>
+    </dl></section>
+
+    <section th:if="${medicamento.activo}" class="historial" aria-labelledby="reponer"><h2 id="reponer">Reponer stock</h2>
+        <p>Registra el ingreso de nuevas unidades (compra o donación). Se suman al stock actual.</p>
+        <form class="filtros" th:action="@{/medicamentos/{id}/reponer(id=${medicamento.idMedicamento})}" method="post">
+            <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+            <div><label for="cantidad" th:text="|Cantidad (${medicamento.unidadMedida})|">Cantidad</label><input id="cantidad" name="cantidad" type="number" min="0.01" step="0.01" required></div>
+            <button class="boton" type="submit">Reponer</button>
+        </form>
+    </section>
+
+    <section class="historial" aria-labelledby="consumos"><h2 id="consumos">Consumo reciente</h2>
+        <p th:if="${#lists.isEmpty(consumos)}">Este medicamento aún no se ha usado en atenciones médicas.</p>
+        <p th:unless="${#lists.isEmpty(consumos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+        <div th:unless="${#lists.isEmpty(consumos)}" class="tabla-scroll" role="region" aria-label="Consumo reciente del medicamento" tabindex="0"><table>
+            <caption class="solo-lector">Últimas 15 atenciones en las que se usó el medicamento</caption>
+            <thead><tr><th scope="col">Fecha</th><th scope="col">Animal</th><th scope="col">Veterinario</th><th scope="col" class="numero">Cantidad</th><th scope="col" class="numero">Costo</th></tr></thead>
+            <tbody><tr th:each="d : ${consumos}">
+                <td class="fecha" th:text="${#temporals.format(d.atencion.fechaAtencion, 'dd/MM/yyyy HH:mm')}"></td>
+                <td><a class="nombre-animal" th:href="@{/animales/{id}(id=${d.atencion.animal.idAnimal})}" th:text="${d.atencion.animal.nombre}"></a><span class="especie" th:text="${d.atencion.animal.codigo}"></span></td>
+                <td th:text="${d.atencion.veterinario.fullName}"></td>
+                <td class="numero" th:text="|${#numbers.formatDecimal(d.cantidad, 1, 'COMMA', 2, 'POINT')} ${medicamento.unidadMedida}|"></td>
+                <td class="numero" th:text="|S/ ${#numbers.formatDecimal(d.cantidad * d.costoUnitario, 1, 'COMMA', 2, 'POINT')}|"></td>
+            </tr></tbody>
+        </table></div>
+    </section>
+
+    <section class="administracion" aria-labelledby="administracion"><h2 id="administracion">Estado del medicamento</h2>
+        <p>Dar de baja un medicamento impide usarlo en nuevas atenciones. Su historial de consumo se conserva para los reportes.</p>
+        <form th:if="${medicamento.activo}" class="confirmar-baja" th:action="@{/medicamentos/{id}/baja(id=${medicamento.idMedicamento})}" method="post"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><label><input type="checkbox" name="confirmar" value="true" required>Confirmo que quiero dar de baja este medicamento.</label><button class="boton peligro" type="submit">Dar de baja</button></form>
+        <form th:unless="${medicamento.activo}" th:action="@{/medicamentos/{id}/activar(id=${medicamento.idMedicamento})}" method="post"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><button class="boton" type="submit">Reactivar medicamento</button></form>
+    </section>
+</main>
+</body>
+</html>

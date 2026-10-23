@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reporte de liberaciones | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <link rel="stylesheet" th:href="@{/css/reportes.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <h1>Liberaciones sobre ingresos</h1>
+    <p class="descripcion">Por cada trimestre: animales que ingresaron al santuario, animales liberados y qué porcentaje representan las liberaciones respecto de los ingresos.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form class="filtros no-imprimir" method="get" aria-label="Rango del reporte">
+        <div><label for="desde">Desde</label><input id="desde" name="desde" type="date" th:value="${desde}" th:max="${hoy}" required></div>
+        <div><label for="hasta">Hasta</label><input id="hasta" name="hasta" type="date" th:value="${hasta}" th:max="${hoy}" required></div>
+        <button class="boton" type="submit">Generar</button>
+        <button class="boton-secundario" type="button" onclick="window.print()">Imprimir</button>
+    </form>
+    <p class="periodo">Periodo: <strong th:text="|${#temporals.format(desde, 'dd/MM/yyyy')} - ${#temporals.format(hasta, 'dd/MM/yyyy')}|"></strong></p>
+
+    <th:block th:if="${reporte != null}">
+        <div class="tarjetas">
+            <div class="tarjeta"><span class="tarjeta-titulo">Animales ingresados</span><span class="tarjeta-valor" th:text="${reporte.totalIngresos}">0</span></div>
+            <div class="tarjeta"><span class="tarjeta-titulo">Animales liberados</span><span class="tarjeta-valor" th:text="${reporte.totalLiberaciones}">0</span></div>
+            <div class="tarjeta destacada"><span class="tarjeta-titulo">Liberaciones / ingresos</span><span class="tarjeta-valor" th:text="${reporte.porcentajeTotal == null ? '-' : reporte.porcentajeTotal + ' %'}">-</span></div>
+        </div>
+
+        <section class="grafico" aria-label="Gráfico de ingresos y liberaciones por trimestre">
+            <canvas id="grafico" height="110" role="img" aria-label="Barras de ingresos y liberaciones por trimestre"></canvas>
+        </section>
+
+        <div class="tabla-scroll" role="region" aria-label="Detalle por trimestre" tabindex="0"><table>
+            <caption class="solo-lector">Ingresos, liberaciones y porcentaje por trimestre</caption>
+            <thead><tr><th scope="col">Trimestre</th><th scope="col" class="numero">Ingresos</th><th scope="col" class="numero">Liberaciones</th><th scope="col" class="numero">Liberaciones / ingresos</th></tr></thead>
+            <tbody><tr th:each="f : ${reporte.filas}">
+                <td th:text="${f.etiqueta}"></td>
+                <td class="numero" th:text="${f.ingresos}"></td>
+                <td class="numero" th:text="${f.liberaciones}"></td>
+                <td class="numero" th:text="${f.porcentaje == null ? '-' : f.porcentaje + ' %'}"></td>
+            </tr></tbody>
+            <tfoot><tr><th scope="row">Total</th><td class="numero" th:text="${reporte.totalIngresos}"></td><td class="numero" th:text="${reporte.totalLiberaciones}"></td><td class="numero" th:text="${reporte.porcentajeTotal == null ? '-' : reporte.porcentajeTotal + ' %'}"></td></tr></tfoot>
+        </table></div>
+        <p class="ayuda">- indica un trimestre sin ingresos (no se puede calcular el porcentaje). Un animal liberado en un trimestre puede haber ingresado en otro anterior, por lo que el porcentaje puede superar el 100 %.</p>
+    </th:block>
+</main>
+<script th:if="${reporte != null}" th:inline="javascript">
+    const etiquetas = /*[[${reporte.filas.![etiqueta]}]]*/ [];
+    const ingresos = /*[[${reporte.filas.![ingresos]}]]*/ [];
+    const liberaciones = /*[[${reporte.filas.![liberaciones]}]]*/ [];
+    if (window.Chart) {
+        new Chart(document.getElementById('grafico'), {
+            type: 'bar',
+            data: { labels: etiquetas, datasets: [
+                { label: 'Ingresos', data: ingresos, backgroundColor: '#9db8a3', borderRadius: 4 },
+                { label: 'Liberaciones', data: liberaciones, backgroundColor: '#31563d', borderRadius: 4 }
+            ] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+    }
+</script>
+</body>
+</html>

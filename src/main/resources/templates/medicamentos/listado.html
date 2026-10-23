@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Medicamentos | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <style>
+        .etiqueta-stock { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: #842c25; background: #fff0ed; }
+        .numero { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+    </style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <div class="titulo-acciones"><div><h1>Inventario de medicamentos</h1><p class="descripcion">Controla el stock disponible para las atenciones médicas. El stock baja automáticamente al registrar una atención.</p></div><a class="boton" th:href="@{/medicamentos/nuevo}">Registrar medicamento</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <p th:if="${totalStockBajo > 0 and !stockBajo}" class="aviso error" role="status">
+        <strong th:text="${totalStockBajo}">0</strong> medicamento(s) activos están en o por debajo de su stock mínimo.
+        <a th:href="@{/medicamentos(stockBajo=true)}">Ver cuáles</a>
+    </p>
+    <form class="filtros" th:action="@{/medicamentos}" method="get" aria-label="Buscar medicamentos">
+        <div class="busqueda"><label for="texto">Nombre o presentación</label><input id="texto" name="texto" type="search" maxlength="100" th:value="${texto}"></div>
+        <div><label for="stockBajo">Stock</label><select id="stockBajo" name="stockBajo"><option value="false" th:selected="${!stockBajo}">Todos</option><option value="true" th:selected="${stockBajo}">Solo stock bajo</option></select></div>
+        <div><label for="registros">Medicamentos</label><select id="registros" name="registros"><option value="activos" th:selected="${registros == 'activos'}">Activos</option><option value="inactivos" th:selected="${registros == 'inactivos'}">Dados de baja</option><option value="todos" th:selected="${registros == 'todos'}">Todos</option></select></div>
+        <button class="boton" type="submit">Consultar</button><a class="limpiar" th:href="@{/medicamentos}">Limpiar</a>
+    </form>
+    <p class="resultado" role="status"><span th:text="${#lists.size(medicamentos)}">0</span> medicamentos encontrados</p>
+    <div th:if="${#lists.isEmpty(medicamentos)}" class="vacio"><h2>No hay medicamentos para esta consulta</h2><p>Cambia el texto o los filtros para ampliar la búsqueda.</p><a th:href="@{/medicamentos}">Ver medicamentos activos</a></div>
+    <p th:unless="${#lists.isEmpty(medicamentos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:unless="${#lists.isEmpty(medicamentos)}" class="tabla-scroll" role="region" aria-label="Inventario de medicamentos" tabindex="0"><table>
+        <caption class="solo-lector">Stock actual, stock mínimo y costo de cada medicamento</caption>
+        <thead><tr><th scope="col">Medicamento</th><th scope="col">Unidad</th><th scope="col" class="numero">Stock actual</th><th scope="col" class="numero">Stock mínimo</th><th scope="col" class="numero">Costo unitario</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead>
+        <tbody><tr th:each="m : ${medicamentos}" th:with="bajo=${m.stockActual.compareTo(m.stockMinimo) <= 0}">
+            <td><a class="nombre-animal" th:href="@{/medicamentos/{id}(id=${m.idMedicamento})}" th:text="${m.nombre}"></a><span class="especie" th:text="${m.presentacion}"></span></td>
+            <td th:text="${m.unidadMedida}"></td>
+            <td class="numero"><span th:text="${#numbers.formatDecimal(m.stockActual, 1, 'COMMA', 2, 'POINT')}"></span><br><span th:if="${bajo and m.activo}" class="etiqueta-stock">Stock bajo</span></td>
+            <td class="numero" th:text="${#numbers.formatDecimal(m.stockMinimo, 1, 'COMMA', 2, 'POINT')}"></td>
+            <td class="numero" th:text="|S/ ${#numbers.formatDecimal(m.costoUnitario, 1, 'COMMA', 2, 'POINT')}|"></td>
+            <td th:text="${m.activo ? 'Activo' : 'Dado de baja'}"></td>
+            <td><div class="acciones-fila"><a th:href="@{/medicamentos/{id}(id=${m.idMedicamento})}" th:aria-label="|Ver ${m.nombre}|">Ver ficha</a><a th:if="${m.activo}" th:href="@{/medicamentos/{id}/editar(id=${m.idMedicamento})}" th:aria-label="|Editar ${m.nombre}|">Editar</a></div></td>
+        </tr></tbody>
+    </table></div>
+    <p class="ayuda">Un medicamento dado de baja no aparece al registrar atenciones, pero su historial de consumo se conserva.</p>
+</main>
+</body>
+</html>

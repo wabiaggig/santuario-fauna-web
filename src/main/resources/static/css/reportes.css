@@ -1,0 +1,18 @@
+.periodo { margin: 16px 0 0; color: var(--secundario); }
+.tarjetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+.tarjeta { display: flex; flex-direction: column; gap: 6px; padding: 20px; background: #fff; border: 1px solid #cbd8c7; border-radius: 8px; }
+.tarjeta.destacada { background: #edf3e8; border-color: #9db8a3; }
+.tarjeta-titulo { color: var(--secundario); font-size: .875rem; font-weight: 600; }
+.tarjeta-valor { font-size: 1.9rem; font-weight: 750; color: var(--hoja-oscura); font-variant-numeric: tabular-nums; line-height: 1.2; overflow-wrap: anywhere; }
+.tarjeta-valor.chica { font-size: 1.1rem; }
+.grafico { margin: 8px 0 32px; padding: 20px; background: #fff; border: 1px solid #cbd8c7; border-radius: 8px; }
+.gestion h2 { margin-top: 32px; }
+.gestion tfoot th, .gestion tfoot td { font-weight: 700; background: #f4f8f1; border-top: 2px solid #cbd8c7; }
+.numero { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.boton-secundario { padding: 12px 18px; font: inherit; font-weight: 600; color: var(--hoja-oscura); background: #fff; border: 1px solid var(--hoja-oscura); border-radius: 8px; cursor: pointer; }
+@media (max-width: 740px) { .tarjetas { grid-template-columns: 1fr; } }
+@media print {
+    .nav-santuario, .no-imprimir, .saltar { display: none !important; }
+    body { background: #fff; }
+    .tabla-scroll { overflow: visible; border: 0; }
+}

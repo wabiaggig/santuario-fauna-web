@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Atenciones médicas | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <style>
+        .lista-medicamentos { margin: 0; padding-left: 18px; font-size: .9rem; }
+        .sin-medicamentos { color: var(--secundario); font-size: .9rem; }
+    </style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion" th:with="salud=${ {'E':'En evaluación','T':'En tratamiento','S':'Saludable'} }">
+    <div class="titulo-acciones"><div><h1>Atenciones médicas</h1><p class="descripcion">Historial de consultas del santuario, con los medicamentos usados en cada una.</p></div><a class="boton" th:href="@{/atenciones/nuevo}">Registrar atención</a></div>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form class="filtros" th:action="@{/atenciones}" method="get" aria-label="Filtrar atenciones">
+        <div class="busqueda"><label for="idAnimal">Animal</label><select id="idAnimal" name="idAnimal"><option value="">Todos los animales</option><option th:each="a : ${animales}" th:value="${a.idAnimal}" th:selected="${a.idAnimal == idAnimal}" th:text="|${a.codigo} · ${a.nombre}|"></option></select></div>
+        <button class="boton" type="submit">Consultar</button><a class="limpiar" th:href="@{/atenciones}">Limpiar</a>
+    </form>
+    <p class="resultado" role="status"><span th:text="${#lists.size(atenciones)}">0</span> atenciones (se muestran las 100 más recientes)</p>
+    <div th:if="${#lists.isEmpty(atenciones)}" class="vacio"><h2>No hay atenciones para esta consulta</h2><a th:href="@{/atenciones/nuevo}">Registrar la primera atención</a></div>
+    <p th:unless="${#lists.isEmpty(atenciones)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:unless="${#lists.isEmpty(atenciones)}" class="tabla-scroll" role="region" aria-label="Atenciones médicas" tabindex="0"><table>
+        <caption class="solo-lector">Atenciones médicas, de la más reciente a la más antigua</caption>
+        <thead><tr><th scope="col">Fecha</th><th scope="col">Animal</th><th scope="col">Diagnóstico</th><th scope="col">Salud</th><th scope="col">Medicamentos</th><th scope="col">Veterinario</th></tr></thead>
+        <tbody><tr th:each="at : ${atenciones}">
+            <td class="fecha" th:text="${#temporals.format(at.fechaAtencion, 'dd/MM/yyyy HH:mm')}"></td>
+            <td><a class="nombre-animal" th:href="@{/animales/{id}(id=${at.animal.idAnimal})}" th:text="${at.animal.nombre}"></a><span class="especie" th:text="|${at.animal.codigo} · ${at.animal.especie.nombreComun}|"></span></td>
+            <td th:text="${#strings.abbreviate(at.diagnostico, 140)}"></td>
+            <td th:text="|${salud.get(at.estadoSaludAnterior)} → ${salud.get(at.estadoSaludResultante)}|"></td>
+            <td>
+                <span th:if="${#lists.isEmpty(at.detalles)}" class="sin-medicamentos">Sin medicamentos</span>
+                <ul th:unless="${#lists.isEmpty(at.detalles)}" class="lista-medicamentos"><li th:each="d : ${at.detalles}" th:text="|${d.medicamento.nombre}: ${#numbers.formatDecimal(d.cantidad, 1, 'COMMA', 2, 'POINT')} ${d.medicamento.unidadMedida}|"></li></ul>
+            </td>
+            <td th:text="${at.veterinario.fullName}"></td>
+        </tr></tbody>
+    </table></div>
+</main>
+</body>
+</html>

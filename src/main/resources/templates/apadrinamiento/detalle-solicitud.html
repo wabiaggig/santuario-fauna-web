@@ -9,19 +9,10 @@
     tailwind.config = { theme: { extend: { colors: { brand: { light: '#f4faec', leaf: '#4a7c59' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } };
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body class="bg-brand-light min-h-screen font-sans text-gray-900">
-  <header class="bg-white border-b border-gray-100">
-    <nav class="max-w-3xl mx-auto px-5 py-5 flex flex-wrap justify-between items-center gap-3">
-      <a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
-      <a th:href="@{/apadrinamientos/solicitudes}" class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline">
-        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7 7-7-7 7-7" />
-        </svg>
-        Volver a solicitudes
-      </a>
-    </nav>
-  </header>
+  <header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
   <main class="max-w-3xl mx-auto px-5 py-12">
     <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-7 sm:p-9">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-5">

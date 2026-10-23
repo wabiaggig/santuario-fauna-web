@@ -6,10 +6,11 @@
     <title>Zonas y disponibilidad | Santuario Río Verde</title>
     <link rel="stylesheet" th:href="@{/css/acceso.css}">
     <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body>
 <a class="saltar" href="#contenido">Ir al contenido</a>
-<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
 <main id="contenido" class="gestion">
     <div class="titulo-acciones"><div><h1>Zonas del santuario</h1><p class="descripcion">Consulta la ocupación y los espacios disponibles antes de alojar o trasladar un animal.</p></div><a class="boton" th:href="@{/zonas/nueva}">Registrar zona</a></div>
     <div th:replace="~{animales/fragmentos :: avisos}"></div>

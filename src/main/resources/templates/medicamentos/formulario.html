@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${idMedicamento == null ? 'Registrar medicamento | Santuario Río Verde' : 'Editar medicamento | Santuario Río Verde'}"></title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
+    <style>
+        .etiqueta-stock { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: #842c25; background: #fff0ed; }
+        .numero { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+    </style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
+<main id="contenido" class="gestion formulario-animal">
+    <a th:href="${idMedicamento == null} ? @{/medicamentos} : @{/medicamentos/{id}(id=${idMedicamento})}">Volver sin guardar</a>
+    <h1 th:text="${idMedicamento == null ? 'Registrar un medicamento' : 'Editar el medicamento'}"></h1>
+    <p class="descripcion">El nombre y la presentación identifican al medicamento; no pueden repetirse juntos.</p>
+    <div th:replace="~{animales/fragmentos :: avisos}"></div>
+    <form th:action="${idMedicamento == null} ? @{/medicamentos/guardar} : @{/medicamentos/{id}/guardar(id=${idMedicamento})}" th:object="${form}" method="post">
+        <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+        <p class="ayuda">Los campos con * son obligatorios.</p>
+        <fieldset><legend>Datos del medicamento</legend><div class="campos">
+            <div class="ancho-completo"><label for="nombre">Nombre *</label><input id="nombre" th:field="*{nombre}" maxlength="100" required></div>
+            <div><label for="presentacion">Presentación *</label><input id="presentacion" th:field="*{presentacion}" maxlength="100" required aria-describedby="ayuda-presentacion"><small id="ayuda-presentacion">Ejemplo: Frasco de 500 mL, Caja de 20 tabletas.</small></div>
+            <div><label for="unidadMedida">Unidad de medida *</label><input id="unidadMedida" th:field="*{unidadMedida}" maxlength="20" required aria-describedby="ayuda-unidad"><small id="ayuda-unidad">Unidad en la que se descuenta el stock: mL, g, comprimido…</small></div>
+        </div></fieldset>
+        <fieldset><legend>Inventario y costo</legend><div class="campos">
+            <div th:if="${idMedicamento == null}"><label for="stockActual">Stock inicial *</label><input id="stockActual" th:field="*{stockActual}" type="number" min="0" step="0.01" required></div>
+            <div th:unless="${idMedicamento == null}"><p class="etiqueta">Stock actual</p><p><strong th:text="|${#numbers.formatDecimal(medicamento.stockActual, 1, 'COMMA', 2, 'POINT')} ${medicamento.unidadMedida}|"></strong><small>Para aumentarlo usa Reponer stock en la ficha. Baja automáticamente con las atenciones.</small></p></div>
+            <div><label for="stockMinimo">Stock mínimo *</label><input id="stockMinimo" th:field="*{stockMinimo}" type="number" min="0" step="0.01" required aria-describedby="ayuda-minimo"><small id="ayuda-minimo">Al llegar a este nivel se marca como stock bajo.</small></div>
+            <div><label for="costoUnitario">Costo unitario (S/) *</label><input id="costoUnitario" th:field="*{costoUnitario}" type="number" min="0" step="0.01" required aria-describedby="ayuda-costo"><small id="ayuda-costo">Costo por unidad de medida. Se usa en el reporte de consumo.</small></div>
+        </div></fieldset>
+        <div class="pie-formulario"><button class="boton" type="submit" th:text="${idMedicamento == null ? 'Guardar medicamento' : 'Guardar cambios'}"></button><a th:href="${idMedicamento == null} ? @{/medicamentos} : @{/medicamentos/{id}(id=${idMedicamento})}">Cancelar</a></div>
+    </form>
+</main>
+</body>
+</html>

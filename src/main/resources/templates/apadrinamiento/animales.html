@@ -12,49 +12,10 @@
       }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } };
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/navegacion.css}">
 </head>
 <body class="bg-brand-light min-h-screen font-sans text-gray-900">
-  <header class="bg-white border-b border-gray-100">
-    <nav class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap items-center justify-between gap-3">
-      <a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
-      <div class="flex flex-wrap items-center justify-end gap-x-5 gap-y-3">
-        <!-- Solo para usuarios con una sesion iniciada -->
-        <a th:if="${session.idUsuario != null}"
-           th:href="@{/panel}"
-           class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-               xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 12H5m7 7-7-7 7-7"/>
-          </svg>
-          <span>Volver a mi panel</span>
-        </a>
-
-        <!-- Solo para el rol Padrino -->
-        <a th:if="${session.nombreRol == 'Padrino'}"
-           th:href="@{/apadrinamientos/mis-solicitudes}"
-           class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-               xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h6m-6 4h6M7 3h8l4 4v14H7a2 2 0 01-2-2V5a2 2 0 012-2z"/>
-          </svg>
-          <span>Mis solicitudes</span>
-        </a>
-
-        <!-- Disponible para todos: vuelve a la pagina de inicio -->
-        <a th:href="@{/}"
-           class="inline-flex items-center gap-2 text-sm text-brand-leaf font-semibold hover:underline transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-               xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3V10.5z"/>
-          </svg>
-          <span>Volver a la portada</span>
-        </a>
-      </div>
-    </nav>
-  </header>
+  <header th:replace="~{fragmentos/navegacion :: cabecera}"></header>
   <main class="max-w-7xl mx-auto px-5 py-12">
     <div class="max-w-3xl mb-10">
       <p class="text-brand-leaf uppercase tracking-widest font-bold text-xs mb-3">Programa de apadrinamiento</p>
