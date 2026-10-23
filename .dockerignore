@@ -1,0 +1,10 @@
+target/
+.git/
+.settings/
+.classpath
+.project
+.factorypath
+bin/
+application-local.properties
+README.md
+docs/
