@@ -54,6 +54,11 @@
             <a class="boton" th:href="@{/zonas}">Gestionar zonas</a> 
 			<a class="boton" th:href="@{/alojamientos}">Ver alojamientos vigentes</a>
         </section>
+        <section class="opcion" th:if="${session.nombreRol == 'Cuidador' or session.nombreRol == 'Veterinario'}">
+            <h2>Animales en cuarentena</h2>
+            <p>Consulta la zona actual y los días en cuarentena de cada animal. Filtra por especie y zona.</p>
+            <a class="boton" th:href="@{/cuarentenas}">Consultar cuarentenas</a>
+        </section>
         <section class="opcion" th:if="${session.nombreRol == 'Veterinario'}">
             <h2>Cuidado veterinario</h2>
             <p>Tu cuenta de veterinario está habilitada. El módulo de seguimiento y atención médica se incorporará a este espacio.</p>
