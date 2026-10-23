@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Control de aportes mensuales | Santuario Río Verde</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+</head>
+
+<body class="bg-brand-light min-h-screen text-gray-900">
+	<header class="bg-white border-b">
+		<nav class="max-w-6xl mx-auto px-5 py-5 flex flex-wrap justify-between gap-4 items-center">
+			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+			<div class="flex flex-wrap gap-4 text-sm font-semibold text-brand-leaf">
+				<a th:href="@{/panel}">← Mi panel</a>
+				<a th:if="${!vistaCuidador}" th:href="@{/donaciones/nueva}">Registrar aporte</a>
+				<a th:if="${!vistaCuidador}" th:href="@{/donaciones/mis-donaciones}">Mis donaciones</a>
+				<a th:if="${vistaCuidador}" th:href="@{/donaciones/pendientes}">Donaciones pendientes</a>
+			</div>
+		</nav>
+	</header>
+	<main class="max-w-6xl mx-auto px-5 py-10">
+		<p class="text-xs uppercase font-bold tracking-widest text-brand-leaf mb-2"
+			th:text="${vistaCuidador ? 'Panel del cuidador' : 'Mi espacio · Padrino'}">Control</p>
+		<h1 class="text-3xl font-bold mb-3">Control de aportes mensuales</h1>
+		<p class="text-gray-600 mb-6">Control de los últimos 12 meses de apadrinamientos vigentes y los próximos meses
+			cubiertos por adelantado (hasta 12 meses). Solo se suma como recibido lo CONFIRMADO por el cuidador; aportes
+			pendientes u observados figuran por separado.</p>
+		<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+			<div class="bg-white border rounded-xl p-4">
+				<p class="text-sm text-gray-500">Cuotas</p><strong class="text-2xl"
+					th:text="${resumen.total}">0</strong>
+			</div>
+			<div class="bg-white border rounded-xl p-4">
+				<p class="text-sm text-green-700">Cubiertas</p><strong class="text-2xl"
+					th:text="${resumen.cubiertos}">0</strong>
+			</div>
+			<div class="bg-white border rounded-xl p-4">
+				<p class="text-sm text-amber-700">En verificación</p><strong class="text-2xl"
+					th:text="${resumen.enRevision}">0</strong>
+			</div>
+			<div class="bg-white border rounded-xl p-4">
+				<p class="text-sm text-blue-700">Parciales</p><strong class="text-2xl"
+					th:text="${resumen.parciales}">0</strong>
+			</div>
+			<div class="bg-white border rounded-xl p-4">
+				<p class="text-sm text-red-700">Pendientes</p><strong class="text-2xl"
+					th:text="${resumen.pendientes}">0</strong>
+			</div>
+		</div>
+		<div th:if="${#lists.isEmpty(resumen.filas)}" class="bg-white border rounded-xl p-8 text-gray-600">No hay
+			apadrinamientos aprobados y vigentes para mostrar. Las donaciones generales siguen disponibles en el
+			historial.</div>
+		<div th:unless="${#lists.isEmpty(resumen.filas)}" class="bg-white border rounded-2xl overflow-x-auto shadow-sm">
+			<table class="min-w-full text-sm text-left">
+				<thead class="bg-gray-50">
+					<tr>
+						<th th:if="${vistaCuidador}" class="p-4">Padrino</th>
+						<th class="p-4">Animal / Apadrinamiento</th>
+						<th class="p-4">Mes</th>
+						<th class="p-4 text-right">Cuota S/</th>
+						<th class="p-4 text-right">Confirmado S/</th>
+						<th class="p-4 text-right">En verificación S/</th>
+						<th class="p-4 text-right">Faltante S/</th>
+						<th class="p-4">Estado</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-100">
+					<tr th:each="f : ${resumen.filas}">
+						<td th:if="${vistaCuidador}" class="p-4" th:text="${f.padrino}">Ana</td>
+						<td class="p-4"><span class="font-semibold" th:text="${f.animal}">Kiro</span><span
+								class="block text-xs text-gray-500"
+								th:text="${'Apadrinamiento #' + f.idApadrinamiento}">#1</span></td>
+						<td class="p-4 whitespace-nowrap" th:text="${#temporals.format(f.periodo, 'MM/yyyy')}">10/2026
+						</td>
+						<td class="p-4 text-right" th:text="${#numbers.formatDecimal(f.cuota, 1, 2)}">50.00</td>
+						<td class="p-4 text-right" th:text="${#numbers.formatDecimal(f.confirmado, 1, 2)}">0.00</td>
+						<td class="p-4 text-right" th:text="${#numbers.formatDecimal(f.enRevision, 1, 2)}">0.00</td>
+						<td class="p-4 text-right font-semibold" th:text="${#numbers.formatDecimal(f.faltante, 1, 2)}">
+							50.00</td>
+						<td class="p-4"><span class="font-semibold rounded-lg px-3 py-1 inline-block text-xs"
+								th:classappend="${f.estado == 'CUBIERTO' ? 'bg-green-100 text-green-800' : (f.estado == 'EN_VERIFICACION' ? 'bg-amber-100 text-amber-800' : (f.estado == 'PARCIAL' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'))}"
+								th:text="${f.estado == 'CUBIERTO' ? 'Cubierto' : (f.estado == 'EN_VERIFICACION' ? 'En verificación' : (f.estado == 'PARCIAL' ? 'Parcial' : 'Pendiente'))}">Pendiente</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-950">
+			<strong>Cómo se calcula:</strong> se considera cubierta una cuota solo si la suma de donaciones CONFIRMADAS
+			asignadas a ese mes alcanza el aporte mensual acordado. Las donaciones RECHAZADAS, generales y los aportes
+			históricos sin mes asignado no se contabilizan. Si un aporte confirmado supera la cuota, el excedente cubre
+			las cuotas siguientes del mismo apadrinamiento, hasta 12 meses futuros visibles; nunca se cuenta dos veces.
+			La cuota del mes inicial no se prorratea.
+		</div>
+	</main>
+</body>
+
+</html>

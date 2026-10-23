@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Detalle de donación | Santuario Río Verde</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+</head>
+
+<body class="bg-brand-light min-h-screen text-gray-900">
+	<header class="bg-white border-b">
+		<nav class="max-w-4xl mx-auto px-5 py-5 flex justify-between gap-4 items-center">
+			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+			<a th:href="@{/donaciones/pendientes}" class="text-brand-leaf font-semibold">← Donaciones pendientes</a>
+		</nav>
+	</header>
+	<main class="max-w-3xl mx-auto px-5 py-12">
+		<p class="text-brand-leaf uppercase tracking-widest font-bold text-xs mb-3">Cuidador · Verificación manual</p>
+		<h1 class="text-3xl font-bold mb-6">Detalle del aporte <span th:text="${'#' + donacion.id}">#1</span></h1>
+		<div th:if="${error}" class="rounded-xl bg-red-50 border border-red-200 p-4 mb-5 text-red-800"
+			th:text="${error}"></div>
+		<section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+			<div class="inline-block rounded-full bg-amber-100 text-amber-800 px-4 py-1 text-xs font-bold mb-5"
+				th:text="${donacion.estado}">PENDIENTE</div>
+			<dl class="divide-y divide-gray-100">
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Padrino</dt>
+					<dd class="font-semibold" th:text="${donacion.padrino}">Ana Lucía</dd>
+				</div>
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Correo de contacto</dt>
+					<dd th:text="${donacion.correo}">correo</dd>
+				</div>
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Tipo</dt>
+					<dd th:text="${donacion.tipo == 'GENERAL' ? 'Donación general' : 'Aporte por apadrinamiento'}">
+						General</dd>
+				</div>
+				<div th:if="${donacion.animal != null}" class="py-3">
+					<dt class="text-sm text-gray-500">Animal apadrinado</dt>
+					<dd th:text="${donacion.animal}">Kiro</dd>
+				</div>
+				<div th:if="${donacion.periodoAporte != null}" class="py-3">
+					<dt class="text-sm text-gray-500">Mes aplicado</dt>
+					<dd th:text="${#temporals.format(donacion.periodoAporte, 'MM/yyyy')}">10/2026</dd>
+				</div>
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Monto</dt>
+					<dd class="font-bold text-xl">S/ <span
+							th:text="${#numbers.formatDecimal(donacion.monto, 1, 2)}">50.00</span></dd>
+				</div>
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Medio</dt>
+					<dd th:text="${donacion.medioPago}">YAPE</dd>
+				</div>
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Referencia / Nº recibo</dt>
+					<dd th:text="${donacion.referencia}">OP123</dd>
+				</div>
+				<div th:if="${donacion.observaciones != null}" class="py-3">
+					<dt class="text-sm text-gray-500">Observaciones</dt>
+					<dd class="whitespace-pre-wrap break-words" th:text="${donacion.observaciones}"></dd>
+				</div>
+				<div th:if="${donacion.comprobanteUrl != null}" class="py-3">
+					<dt class="text-sm text-gray-500">Enlace de comprobante</dt>
+					<dd><a th:href="${donacion.comprobanteUrl}" target="_blank" rel="noopener noreferrer"
+							class="break-all text-brand-leaf underline" th:text="${donacion.comprobanteUrl}"></a></dd>
+				</div>
+				<div class="py-3">
+					<dt class="text-sm text-gray-500">Fecha de presentación</dt>
+					<dd
+						th:text="${donacion.fechaSolicitud != null ? #temporals.format(donacion.fechaSolicitud, 'dd/MM/yyyy HH:mm') : 'Sin fecha'}">
+						Fecha</dd>
+				</div>
+			</dl>
+			<div th:if="${donacion.motivoObservacion != null}"
+				class="mt-5 bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-900">
+				<strong>Motivo de observación anterior:</strong> <span th:text="${donacion.motivoObservacion}"></span>
+			</div>
+			<div class="mt-8 border-t pt-6">
+				<h2 class="text-xl font-bold mb-3">Verificar aporte</h2>
+				<p class="text-sm text-gray-600 mb-5">Verifica la referencia y el comprobante fuera del sistema. Estas
+					acciones no procesan pagos.</p>
+				<form th:action="@{/donaciones/pendientes/{id}/confirmar(id=${donacion.id})}" method="post"
+					class="mb-6">
+					<input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+					<button type="submit"
+						class="bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg px-5 py-3">Confirmar
+						aporte recibido</button>
+				</form>
+				<form th:if="${donacion.estado == 'PENDIENTE'}"
+					th:action="@{/donaciones/pendientes/{id}/observar(id=${donacion.id})}" method="post"
+					class="mb-6 p-4 border border-amber-200 rounded-xl">
+					<input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+					<label for="motivo-observar" class="font-semibold block mb-2">Motivo de observación</label>
+					<textarea id="motivo-observar" name="motivoObservacion" maxlength="255" required rows="2"
+						class="w-full border rounded-lg p-3 mb-3"
+						placeholder="Ejemplo: falta comprobar la referencia"></textarea>
+					<button type="submit"
+						class="bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg px-5 py-3">Observar
+						donación</button>
+				</form>
+				<form th:action="@{/donaciones/pendientes/{id}/rechazar(id=${donacion.id})}" method="post"
+					class="p-4 border border-red-200 rounded-xl">
+					<input type="hidden" name="_csrf" th:value="${session.csrfToken}">
+					<label for="motivo-rechazar" class="font-semibold block mb-2">Motivo de rechazo</label>
+					<textarea id="motivo-rechazar" name="motivoObservacion" maxlength="255" required rows="2"
+						class="w-full border rounded-lg p-3 mb-3"
+						placeholder="Explica por qué se rechaza el aporte"></textarea>
+					<button type="submit"
+						class="bg-red-700 hover:bg-red-800 text-white font-semibold rounded-lg px-5 py-3">Rechazar
+						donación</button>
+				</form>
+			</div>
+		</section>
+	</main>
+</body>
+
+</html>

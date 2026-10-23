@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Mis donaciones | Santuario Río Verde</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+</head>
+
+<body class="bg-brand-light min-h-screen text-gray-900">
+	<header class="bg-white border-b">
+		<nav class="max-w-6xl mx-auto flex flex-wrap gap-4 justify-between items-center px-5 py-5">
+			<a th:href="@{/}" class="text-xl font-bold">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+			<div class="flex gap-4 text-brand-leaf font-semibold"><a th:href="@{/panel}">← Mi panel</a><a
+					th:href="@{/donaciones/nueva}">Registrar donación</a><a th:href="@{/donaciones/control-mensual}">Mi
+					control mensual</a></div>
+		</nav>
+	</header>
+	<main class="max-w-6xl mx-auto px-5 py-12">
+		<p class="text-xs font-bold text-brand-leaf uppercase tracking-widest mb-3">Mi espacio · Padrino</p>
+		<h1 class="text-3xl font-bold mb-3">Historial de mis donaciones</h1>
+		<p class="text-gray-600 mb-7">Consulta tus donaciones generales y aportes por apadrinamiento. Una donación
+			pendiente todavía no está confirmada por el santuario.</p>
+		<div th:if="${#lists.isEmpty(donaciones)}" class="bg-white p-8 border rounded-xl text-gray-600">Todavía no has
+			registrado donaciones. <a th:href="@{/donaciones/nueva}" class="text-brand-leaf underline">Registrar mi
+				primera donación</a></div>
+		<div th:unless="${#lists.isEmpty(donaciones)}" class="bg-white border rounded-2xl overflow-x-auto shadow-sm">
+			<table class="min-w-full text-sm text-left">
+				<thead class="bg-gray-50">
+					<tr>
+						<th class="p-4">N.º</th>
+						<th class="p-4">Fecha</th>
+						<th class="p-4">Tipo / Animal</th>
+						<th class="p-4">Mes aplicado</th>
+						<th class="p-4 text-right">Monto</th>
+						<th class="p-4">Medio</th>
+						<th class="p-4">Estado</th>
+						<th class="p-4">Observación / rechazo</th>
+						<th class="p-4">Detalle</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-100">
+					<tr th:each="d : ${donaciones}">
+						<td class="p-4 font-semibold" th:text="${'#' + d.id}">#1</td>
+						<td class="p-4 whitespace-nowrap"
+							th:text="${d.fechaSolicitud != null ? #temporals.format(d.fechaSolicitud, 'dd/MM/yyyy HH:mm') : #temporals.format(d.fechaDonacion, 'dd/MM/yyyy HH:mm')}">
+							23/10/2026</td>
+						<td class="p-4"
+							th:text="${d.tipo == 'GENERAL' ? 'Donación general' : 'Apadrinamiento: ' + d.animal}">
+							General</td>
+						<td class="p-4"
+							th:text="${d.periodoAporte == null ? 'No asignado' : #temporals.format(d.periodoAporte, 'MM/yyyy')}">
+							—</td>
+						<td class="p-4 text-right font-semibold whitespace-nowrap">S/ <span
+								th:text="${#numbers.formatDecimal(d.monto, 1, 2)}">30.00</span></td>
+						<td class="p-4" th:text="${d.medioPago}">YAPE</td>
+						<td class="p-4"><span class="inline-block rounded-lg px-3 py-1 text-xs font-bold"
+								th:classappend="${d.estado == 'CONFIRMADA' ? 'bg-green-100 text-green-800' : (d.estado == 'RECHAZADA' ? 'bg-red-100 text-red-800' : (d.estado == 'OBSERVADA' ? 'bg-orange-100 text-orange-800' : 'bg-amber-100 text-amber-900'))}"
+								th:text="${d.estado}">PENDIENTE</span></td>
+						<td class="p-4 max-w-xs break-words"
+							th:text="${d.motivoObservacion != null ? d.motivoObservacion : '—'}">—</td>
+						<td class="p-4"><a th:href="@{/donaciones/registrada/{id}(id=${d.id})}"
+								class="text-brand-leaf font-semibold underline whitespace-nowrap">Ver detalle</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
+</body>
+
+</html>

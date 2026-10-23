@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Donaciones pendientes | Santuario Río Verde</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+</head>
+
+<body class="bg-brand-light min-h-screen text-gray-900">
+	<header class="bg-white border-b">
+		<nav class="max-w-6xl mx-auto px-5 py-5 flex flex-wrap items-center justify-between gap-4">
+			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+			<a th:href="@{/panel}" class="text-brand-leaf font-semibold">← Volver al panel</a>
+		</nav>
+	</header>
+	<main class="max-w-6xl mx-auto px-5 py-12">
+		<p class="text-brand-leaf uppercase font-bold tracking-widest text-xs mb-3">Panel del cuidador</p>
+		<h1 class="text-3xl font-bold mb-3">Donaciones por verificar</h1>
+		<p class="text-gray-600 mb-7">Revisa donaciones pendientes y observadas. Confirma el ingreso real, solicita
+			revisión adicional o rechaza con un motivo.</p>
+		<div th:if="${mensaje}" class="mb-5 rounded-xl bg-green-50 border border-green-200 p-4 text-green-900"
+			th:text="${mensaje}"></div>
+		<div th:if="${error}" class="mb-5 rounded-xl bg-red-50 border border-red-200 p-4 text-red-800"
+			th:text="${error}"></div>
+		<div class="inline-flex items-center gap-3 mb-8 rounded-xl bg-white border border-gray-100 p-5">
+			<span class="text-gray-500">Pendientes y observadas</span><strong class="text-2xl text-brand-leaf"
+				th:text="${totalPendientes}">0</strong>
+		</div>
+		<div th:if="${#lists.isEmpty(donaciones)}" class="bg-white rounded-2xl p-8 text-gray-600">No hay aportes
+			pendientes ni observados.</div>
+		<div th:unless="${#lists.isEmpty(donaciones)}"
+			class="bg-white border border-gray-100 rounded-2xl overflow-x-auto shadow-sm">
+			<table class="min-w-full text-sm text-left">
+				<thead class="bg-gray-50">
+					<tr>
+						<th class="p-4">N.º</th>
+						<th class="p-4">Padrino</th>
+						<th class="p-4">Tipo / Animal</th>
+						<th class="p-4">Mes</th>
+						<th class="p-4 text-right">Monto</th>
+						<th class="p-4">Estado</th>
+						<th class="p-4">Medio</th>
+						<th class="p-4">Fecha</th>
+						<th class="p-4">Acción</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-100">
+					<tr th:each="d : ${donaciones}">
+						<td class="p-4 font-bold" th:text="${'#' + d.id}">#1</td>
+						<td class="p-4" th:text="${d.padrino}">Ana Lucía</td>
+						<td class="p-4" th:text="${d.tipo == 'GENERAL' ? 'General' : d.animal}">Kiro</td>
+						<td class="p-4 whitespace-nowrap"
+							th:text="${d.periodoAporte == null ? '—' : #temporals.format(d.periodoAporte, 'MM/yyyy')}">—
+						</td>
+						<td class="p-4 text-right font-semibold whitespace-nowrap">S/ <span
+								th:text="${#numbers.formatDecimal(d.monto, 1, 2)}">50.00</span></td>
+						<td class="p-4 font-semibold" th:text="${d.estado}">PENDIENTE</td>
+						<td class="p-4" th:text="${d.medioPago}">YAPE</td>
+						<td class="p-4 whitespace-nowrap"
+							th:text="${d.fechaSolicitud != null ? #temporals.format(d.fechaSolicitud, 'dd/MM/yyyy HH:mm') : 'Sin fecha'}">
+							Hoy</td>
+						<td class="p-4"><a th:href="@{/donaciones/pendientes/{id}(id=${d.id})}"
+								class="inline-flex whitespace-nowrap bg-brand-leaf text-white rounded-full px-4 py-2 font-semibold">Ver
+								detalle</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
+</body>
+
+</html>
