@@ -26,6 +26,20 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Intege
             + "order by a.zona.nombre, a.animal.nombre")
     List<Alojamiento> buscarVigentes(@Param("texto") String texto, @Param("idZona") Integer idZona);
 
+    @EntityGraph(attributePaths = {"animal", "animal.especie", "zona"})
+    @Query("""
+            select a from Alojamiento a
+            where a.fechaSalida is null
+                and a.animal.activo = true and a.animal.estado = 'A'
+                and a.animal.fechaInicioCuarentena is not null
+                and a.animal.fechaFinCuarentena is null
+                and (a.animal.especie.idEspecie = :idEspecie or :idEspecie is null)
+                and (a.zona.idZona = :idZona or :idZona is null)
+            order by a.animal.fechaInicioCuarentena, a.animal.codigo
+            """)
+    List<Alojamiento> buscarCuarentenas(@Param("idEspecie") Integer idEspecie,
+            @Param("idZona") Integer idZona);
+
     @Query("select a.zona.idZona, count(a) from Alojamiento a where a.fechaSalida is null group by a.zona.idZona")
     List<Object[]> contarOcupacionPorZona();
 }

@@ -9,6 +9,7 @@ import org.springframework.web.method.HandlerMethod;
 import com.cibertec.santuario.controller.AnimalController;
 import com.cibertec.santuario.controller.ZonaController;
 import com.cibertec.santuario.controller.AlojamientoController;
+import com.cibertec.santuario.controller.CuarentenaController;
 
 
 @Component
@@ -25,15 +26,26 @@ public class AutenticacionInterceptor implements HandlerInterceptor {
             return false;
         }
         String ruta = request.getServletPath();
-        Class<?> controlador = ((HandlerMethod) handler).getBeanType();
+        HandlerMethod metodo = (HandlerMethod) handler;
+        Class<?> controlador = metodo.getBeanType();
+        boolean consulta = "GET".equals(request.getMethod()) || "HEAD".equals(request.getMethod());
+        boolean veterinario = "Veterinario".equals(session.getAttribute("nombreRol"));
+        if (CuarentenaController.class.isAssignableFrom(controlador)
+                && !"Cuidador".equals(session.getAttribute("nombreRol")) && !veterinario) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return false;
+        }
         if (AnimalController.class.isAssignableFrom(controlador)
                 || ZonaController.class.isAssignableFrom(controlador)
                 || AlojamientoController.class.isAssignableFrom(controlador)) {
-            if (!"Cuidador".equals(session.getAttribute("nombreRol"))) {
+            boolean fichaVeterinario = veterinario && consulta
+                    && AnimalController.class.isAssignableFrom(controlador)
+                    && "detalle".equals(metodo.getMethod().getName());
+            if (!"Cuidador".equals(session.getAttribute("nombreRol")) && !fichaVeterinario) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return false;
             }
-            if (!"GET".equals(request.getMethod()) && !"HEAD".equals(request.getMethod())) {
+            if (!consulta) {
                 String token = request.getParameter("_csrf");
                 if (token == null || !token.equals(session.getAttribute("csrfToken"))) {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN);

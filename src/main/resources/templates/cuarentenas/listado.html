@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animales en cuarentena | Santuario Río Verde</title>
+    <link rel="stylesheet" th:href="@{/css/acceso.css}">
+    <link rel="stylesheet" th:href="@{/css/animales.css}">
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header th:replace="~{animales/fragmentos :: cabecera}"></header>
+<main id="contenido" class="gestion">
+    <div class="titulo-acciones">
+        <div>
+            <h1>Animales en cuarentena</h1>
+            <p class="descripcion">Revisa la ubicación y los días transcurridos de los animales con cuarentena abierta.</p>
+        </div>
+    </div>
+    <form class="filtros" th:action="@{/cuarentenas}" method="get" th:object="${filter}" aria-label="Consultar animales en cuarentena">
+        <div class="busqueda">
+            <label for="idEspecie">Especie</label>
+            <select id="idEspecie" th:field="*{idEspecie}">
+                <option value="">Todas las especies</option>
+                <option th:each="especie : ${especies}" th:value="${especie.idEspecie}" th:text="${especie.nombreComun}"></option>
+            </select>
+        </div>
+        <div class="busqueda">
+            <label for="idZona">Zona actual</label>
+            <select id="idZona" th:field="*{idZona}">
+                <option value="">Todas las zonas</option>
+                <option th:each="zona : ${zonas}" th:value="${zona.idZona}" th:text="${zona.nombre}"></option>
+            </select>
+        </div>
+        <button class="boton" type="submit">Buscar</button>
+        <a class="limpiar" th:href="@{/cuarentenas}">Limpiar</a>
+    </form>
+    <p class="resultado" role="status"><span th:text="${#lists.size(cuarentenas)}">0</span> animales en cuarentena encontrados</p>
+    <div th:if="${#lists.isEmpty(cuarentenas)}" class="vacio">
+        <h2>No hay animales en cuarentena para esta consulta</h2>
+        <p>Prueba con otra especie o zona, o limpia los filtros para consultar todas las cuarentenas abiertas.</p>
+        <a th:href="@{/cuarentenas}">Ver todas las cuarentenas</a>
+    </div>
+    <p th:unless="${#lists.isEmpty(cuarentenas)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
+    <div th:unless="${#lists.isEmpty(cuarentenas)}" class="tabla-scroll" role="region" aria-label="Animales con cuarentena abierta" tabindex="0">
+        <table>
+            <caption class="solo-lector">Animales ordenados desde el inicio de cuarentena más antiguo, con su zona actual y acceso a la ficha</caption>
+            <thead><tr><th scope="col">Animal</th><th scope="col">Especie</th><th scope="col">Zona actual</th><th scope="col">Inicio de cuarentena</th><th scope="col">Días transcurridos</th><th scope="col">Acciones</th></tr></thead>
+            <tbody>
+                <tr th:each="alojamiento : ${cuarentenas}">
+                    <td><span class="nombre-animal" th:text="${alojamiento.animal.nombre}"></span><span class="codigo" th:text="${alojamiento.animal.codigo}"></span></td>
+                    <td th:text="${alojamiento.animal.especie.nombreComun}"></td>
+                    <td th:text="${alojamiento.zona.nombre}"></td>
+                    <td class="fecha" th:text="${#temporals.format(alojamiento.animal.fechaInicioCuarentena, 'dd/MM/yyyy')}"></td>
+                    <td class="codigo" th:text="${diasCuarentena[alojamiento.idAlojamiento]}"></td>
+                    <td><a th:href="@{/animales/{id}(id=${alojamiento.animal.idAnimal})}" th:aria-label="|Ver ficha de ${alojamiento.animal.nombre}|">Ver ficha</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="ayuda">Los días se cuentan desde el inicio de cuarentena, sin reiniciarse al cambiar de zona. Esta consulta no modifica la evaluación veterinaria.</p>
+</main>
+</body>
+</html>
