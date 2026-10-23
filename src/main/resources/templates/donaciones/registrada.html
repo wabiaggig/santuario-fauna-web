@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Aporte registrado | Santuario Río Verde</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>tailwind.config = {theme: {extend: {colors: {brand: {light: '#f4faec', leaf: '#4a7c59'}}}}};</script>
+</head>
+
+<body class="bg-brand-light min-h-screen text-gray-900">
+	<header class="bg-white border-b">
+		<nav class="max-w-4xl mx-auto flex justify-between items-center px-5 py-5 gap-4">
+			<a th:href="@{/}" class="font-bold text-xl">Santuario <span class="text-brand-leaf">Río Verde</span></a>
+			<a th:href="@{/panel}" class="text-brand-leaf font-semibold">← Mi panel</a>
+		</nav>
+	</header>
+	<main class="max-w-2xl mx-auto px-5 py-12">
+		<section class="bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
+			<p class="uppercase text-brand-leaf font-bold tracking-widest text-xs mb-3">Registro completado</p>
+			<h1 class="text-3xl font-bold mb-4">Aporte presentado correctamente</h1>
+			<p class="text-gray-600 mb-6">Este registro no confirma que el dinero haya sido recibido. El cuidador
+				revisará tu aporte.</p>
+			<dl class="divide-y divide-gray-100">
+				<div class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">N.º de aporte</dt>
+					<dd class="font-bold" th:text="${donacion.id}">1</dd>
+				</div>
+				<div class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Tipo</dt>
+					<dd th:text="${donacion.tipo == 'GENERAL' ? 'Donación general' : 'Por apadrinamiento'}">General</dd>
+				</div>
+				<div th:if="${donacion.animal != null}" class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Animal</dt>
+					<dd th:text="${donacion.animal}">Kiro</dd>
+				</div>
+				<div th:if="${donacion.periodoAporte != null}" class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Mes aplicado</dt>
+					<dd th:text="${#temporals.format(donacion.periodoAporte, 'MM/yyyy')}">10/2026</dd>
+				</div>
+				<div class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Monto</dt>
+					<dd class="font-bold">S/ <span
+							th:text="${#numbers.formatDecimal(donacion.monto, 1, 2)}">50.00</span></dd>
+				</div>
+				<div class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Medio</dt>
+					<dd th:text="${donacion.medioPago}">YAPE</dd>
+				</div>
+				<div class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Referencia</dt>
+					<dd th:text="${donacion.referencia}">OPER-123</dd>
+				</div>
+				<div class="py-3 flex justify-between gap-3">
+					<dt class="text-gray-500">Estado</dt>
+					<dd class="font-bold text-amber-700" th:text="${donacion.estado}">PENDIENTE</dd>
+				</div>
+			</dl>
+			<div th:if="${donacion.fechaRevision != null}" class="py-3 flex justify-between gap-3">
+				<dt class="text-gray-500">Fecha de revisión</dt>
+				<dd th:text="${#temporals.format(donacion.fechaRevision, 'dd/MM/yyyy HH:mm')}"></dd>
+			</div>
+			<div th:if="${donacion.motivoObservacion != null}"
+				class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+				<strong>Motivo de observación o rechazo:</strong> <span th:text="${donacion.motivoObservacion}"></span>
+			</div>
+			<div class="mt-8 flex flex-wrap gap-3">
+				<a th:href="@{/donaciones/control-mensual}"
+					class="rounded-full border border-green-700 text-brand-leaf px-5 py-3 font-semibold">Mi control
+					mensual</a>
+				<a th:href="@{/donaciones/mis-donaciones}"
+					class="rounded-full border border-green-700 text-brand-leaf px-5 py-3 font-semibold">Mis
+					donaciones</a>
+				<a th:href="@{/donaciones/nueva}"
+					class="rounded-full bg-brand-leaf text-white px-5 py-3 font-semibold">Registrar otro aporte</a>
+				<a th:href="@{/panel}"
+					class="rounded-full border border-green-700 text-brand-leaf px-5 py-3 font-semibold">Volver a mi
+					panel</a>
+			</div>
+		</section>
+	</main>
+</body>
+
+</html>

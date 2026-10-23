@@ -21,8 +21,13 @@
         <section class="opcion" th:if="${session.nombreRol == 'Padrino'}">
             <h2>Acompaña a un animal</h2>
             <p>Conoce los animales disponibles y elige a quién quieres apoyar.</p>
-            <a class="boton" th:href="@{/apadrinamientos/animales}">Ver animales para apadrinar</a>
-			<a class="boton" th:href="@{/apadrinamientos/mis-solicitudes}">Mis solicitudes</a>
+			<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+			    <a class="boton" style="margin: 0;" th:href="@{/apadrinamientos/animales}">Ver animales para apadrinar</a>
+			    <a class="boton" style="margin: 0;" th:href="@{/apadrinamientos/mis-solicitudes}">Mis solicitudes</a>
+			    <a class="boton" style="margin: 0;" th:href="@{/donaciones/nueva}">Registrar donación</a>
+				<a class="boton" style="margin: 0;" th:href="@{/donaciones/mis-donaciones}">Mis donaciones</a>
+				<a class="boton" style="margin: 0;" th:href="@{/donaciones/control-mensual}">Mis aportes mensuales</a>
+			</div>
 			</section>
         <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
             <h2>Gestión del refugio</h2>
@@ -35,11 +40,19 @@
 		    <a class="boton" th:href="@{/apadrinamientos/solicitudes}">Ver solicitudes pendientes</a>
 			<a class="boton" th:href="@{/apadrinamientos/solicitudes/historial}">Historial de solicitudes</a>
 		</section>
+		<section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
+		    <h2>Donaciones por verificar</h2>
+		    <p>Revisa aportes pendientes u observados y verifica sus referencias de pago.</p>
+		    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+		        <a class="boton" style="margin: 0;" th:href="@{/donaciones/pendientes}">Ver donaciones pendientes</a>
+		        <a class="boton" style="margin: 0;" th:href="@{/donaciones/control-mensual/cuidador}">Control de aportes mensuales</a>
+		    </div>
+		</section>
         <section class="opcion" th:if="${session.nombreRol == 'Cuidador'}">
             <h2>Zonas y alojamientos</h2>
             <p>Revisa los cupos del refugio, administra sus zonas y registra los traslados de animales.</p>
-            <a class="boton" th:href="@{/zonas}">Gestionar zonas</a>
-            <a class="volver" th:href="@{/alojamientos}">Ver alojamientos vigentes</a>
+            <a class="boton" th:href="@{/zonas}">Gestionar zonas</a> 
+			<a class="boton" th:href="@{/alojamientos}">Ver alojamientos vigentes</a>
         </section>
         <section class="opcion" th:if="${session.nombreRol == 'Cuidador' or session.nombreRol == 'Veterinario'}">
             <h2>Animales en cuarentena</h2>
