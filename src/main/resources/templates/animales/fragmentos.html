@@ -3,12 +3,13 @@
 <body>
 <header class="cabecera" th:fragment="cabecera">
     <a class="marca" th:href="@{/}">Santuario <span>Río Verde</span></a>
-    <nav aria-label="Navegación del cuidador">
+    <nav aria-label="Navegación del santuario">
         <a th:href="@{/panel}">Mi espacio</a>
-        <a th:href="@{/animales}">Animales</a>
-		<a th:href="@{/apadrinamientos/solicitudes}">Solicitudes</a>
-        <a th:href="@{/zonas}">Zonas</a>
-        <a th:href="@{/alojamientos}">Alojamientos</a>
+        <a th:if="${session.nombreRol == 'Cuidador'}" th:href="@{/animales}">Animales</a>
+        <a th:if="${session.nombreRol == 'Cuidador'}" th:href="@{/apadrinamientos/solicitudes}">Solicitudes</a>
+        <a th:if="${session.nombreRol == 'Cuidador'}" th:href="@{/zonas}">Zonas</a>
+        <a th:if="${session.nombreRol == 'Cuidador'}" th:href="@{/alojamientos}">Alojamientos</a>
+        <a th:href="@{/cuarentenas}">Cuarentenas</a>
         <form th:action="@{/cerrar-sesion}" method="post">
             <input type="hidden" name="_csrf" th:value="${session.csrfToken}">
             <button class="enlace-boton" type="submit">Cerrar sesión</button>

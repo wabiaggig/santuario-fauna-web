@@ -11,8 +11,9 @@
 <a class="saltar" href="#contenido">Ir al contenido</a>
 <header th:replace="~{animales/fragmentos :: cabecera}"></header>
 <main id="contenido" class="gestion">
-    <a th:href="@{/animales}">Volver a animales</a>
-    <div class="titulo-acciones"><div><h1 th:text="${animal.nombre}"></h1><p class="descripcion"><span class="codigo" th:text="${animal.codigo}"></span> · <span th:text="${animal.especie.nombreComun}"></span></p></div><a th:if="${animal.activo}" class="boton" th:href="@{/animales/{id}/editar(id=${animal.idAnimal})}">Editar ficha</a></div>
+    <a th:if="${session.nombreRol == 'Cuidador'}" th:href="@{/animales}">Volver a animales</a>
+    <a th:if="${session.nombreRol == 'Veterinario'}" th:href="@{/cuarentenas}">Volver a cuarentenas</a>
+    <div class="titulo-acciones"><div><h1 th:text="${animal.nombre}"></h1><p class="descripcion"><span class="codigo" th:text="${animal.codigo}"></span> · <span th:text="${animal.especie.nombreComun}"></span></p></div><a th:if="${session.nombreRol == 'Cuidador' and animal.activo}" class="boton" th:href="@{/animales/{id}/editar(id=${animal.idAnimal})}">Editar ficha</a></div>
     <div th:replace="~{animales/fragmentos :: avisos}"></div>
     <p th:unless="${animal.activo}" class="aviso">Esta ficha está dada de baja. Se conserva para consultar sus antecedentes.</p>
     <section class="datos-ficha" aria-labelledby="datos"><h2 id="datos">Datos del animal</h2>
@@ -33,7 +34,7 @@
         <p th:if="${animal.fotoUrl != null and (#strings.startsWith(animal.fotoUrl, 'https://') or #strings.startsWith(animal.fotoUrl, 'http://'))}"><a th:href="${animal.fotoUrl}" target="_blank" rel="noopener noreferrer">Abrir foto del animal (nueva pestaña)</a></p>
     </section>
     <section class="historial" aria-labelledby="alojamientos"><h2 id="alojamientos">Historial de alojamientos</h2>
-        <p th:if="${animal.activo and animal.estado == 'A' and !#lists.isEmpty(alojamientos)}"><a th:href="@{/alojamientos/trasladar/{id}(id=${animal.idAnimal})}">Registrar traslado a otra zona</a></p>
+        <p th:if="${session.nombreRol == 'Cuidador' and animal.activo and animal.estado == 'A' and !#lists.isEmpty(alojamientos)}"><a th:href="@{/alojamientos/trasladar/{id}(id=${animal.idAnimal})}">Registrar traslado a otra zona</a></p>
         <p th:if="${#lists.isEmpty(alojamientos)}">Esta ficha no tiene alojamientos registrados.</p>
         <p th:unless="${#lists.isEmpty(alojamientos)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
         <div th:unless="${#lists.isEmpty(alojamientos)}" class="tabla-scroll" role="region" aria-label="Historial de alojamientos" tabindex="0"><table>
@@ -42,7 +43,7 @@
             <tbody><tr th:each="alojamiento : ${alojamientos}"><td th:text="${alojamiento.zona.nombre}"></td><td class="fecha" th:text="${#temporals.format(alojamiento.fechaEntrada, 'dd/MM/yyyy HH:mm')}"></td><td class="fecha" th:text="${alojamiento.fechaSalida == null ? 'Alojamiento vigente' : #temporals.format(alojamiento.fechaSalida, 'dd/MM/yyyy HH:mm')}"></td></tr></tbody>
         </table></div>
     </section>
-    <section class="administracion" aria-labelledby="ficha"><h2 id="ficha">Administración de la ficha</h2>
+    <section th:if="${session.nombreRol == 'Cuidador'}" class="administracion" aria-labelledby="ficha"><h2 id="ficha">Administración de la ficha</h2>
         <p>La baja conserva los datos y no representa una liberación ni un fallecimiento. No se permite mientras haya alojamientos o apadrinamientos abiertos.</p>
         <a th:if="${animal.activo}" class="enlace-peligro" th:href="@{/animales/{id}/baja(id=${animal.idAnimal})}">Dar de baja la ficha</a>
         <form th:unless="${animal.activo}" th:action="@{/animales/{id}/activar(id=${animal.idAnimal})}" method="post"><input type="hidden" name="_csrf" th:value="${session.csrfToken}"><button class="boton" type="submit">Reactivar ficha</button></form>
