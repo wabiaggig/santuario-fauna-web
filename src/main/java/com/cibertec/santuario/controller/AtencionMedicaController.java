@@ -1,6 +1,7 @@
 package com.cibertec.santuario.controller;
 
 import java.time.LocalDate;
+
 import java.util.Map;
 
 import com.cibertec.santuario.dto.AtencionMedicaRequestDTO;
@@ -19,12 +20,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.cibertec.santuario.service.ConstanciaPdfService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/atenciones")
 @RequiredArgsConstructor
 public class AtencionMedicaController {
     private final AtencionMedicaService atencionService;
+    private final ConstanciaPdfService constanciaPdfService;
 
     @ModelAttribute("estadosSalud")
     public Map<String, String> estadosSalud() {
@@ -68,6 +75,19 @@ public class AtencionMedicaController {
             model.addAttribute("error", "Otro usuario está usando estos medicamentos. Vuelve a intentarlo.");
         }
         return prepararFormulario(model);
+    }
+    
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> constanciaPdf(@PathVariable("id") Integer id) {
+        try {
+            byte[] pdf = constanciaPdfService.generar(id);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=constancia_atencion_" + id + ".pdf")
+                    .body(pdf);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private String prepararFormulario(Model model) {
