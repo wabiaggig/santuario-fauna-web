@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="constancia_atencion" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40">
+	<parameter name="idAtencion" class="java.lang.Integer"/>
+	<parameter name="fecha" class="java.lang.String"/>
+	<parameter name="animal" class="java.lang.String"/>
+	<parameter name="veterinario" class="java.lang.String"/>
+	<parameter name="diagnostico" class="java.lang.String"/>
+	<parameter name="tratamiento" class="java.lang.String"/>
+	<parameter name="estadoResultante" class="java.lang.String"/>
+	<parameter name="total" class="java.math.BigDecimal"/>
+	<field name="medicamento" class="java.lang.String"/>
+	<field name="cantidad" class="java.math.BigDecimal"/>
+	<field name="costoUnitario" class="java.math.BigDecimal"/>
+	<field name="subtotal" class="java.math.BigDecimal"/>
+	<title>
+		<band height="240" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="515" height="34" forecolor="#FFFFFF" backcolor="#2E7D32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SANTUARIO DE FAUNA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="46" width="400" height="24"/>
+				<textElement verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONSTANCIA DE ATENCIÓN MÉDICA N.°]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="400" y="46" width="115" height="24"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{idAtencion}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="76" width="515" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="88" width="120" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="88" width="390" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecha}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="110" width="120" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Animal:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="110" width="390" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{animal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="132" width="120" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Veterinario:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="132" width="390" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{veterinario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="154" width="120" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado resultante:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="154" width="390" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{estadoResultante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="176" width="120" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Diagnóstico:]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="125" y="176" width="390" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{diagnostico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="200" width="120" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tratamiento:]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="125" y="200" width="390" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tratamiento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="26">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="255" height="26" forecolor="#FFFFFF" backcolor="#2E7D32"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Medicamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="255" y="0" width="80" height="26" forecolor="#FFFFFF" backcolor="#2E7D32"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="335" y="0" width="90" height="26" forecolor="#FFFFFF" backcolor="#2E7D32"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Costo unit.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="425" y="0" width="90" height="26" forecolor="#FFFFFF" backcolor="#2E7D32"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Subtotal]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="0" width="255" height="22"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{medicamento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##">
+				<reportElement x="255" y="0" width="80" height="22"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="335" y="0" width="90" height="22"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costoUnitario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="0" width="90" height="22"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="40">
+			<staticText>
+				<reportElement x="335" y="10" width="90" height="22"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="10" width="90" height="22"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

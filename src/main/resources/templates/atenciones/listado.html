@@ -27,7 +27,7 @@
     <p th:unless="${#lists.isEmpty(atenciones)}" class="ayuda-tabla">Desliza la tabla para ver todas las columnas.</p>
     <div th:unless="${#lists.isEmpty(atenciones)}" class="tabla-scroll" role="region" aria-label="Atenciones médicas" tabindex="0"><table>
         <caption class="solo-lector">Atenciones médicas, de la más reciente a la más antigua</caption>
-        <thead><tr><th scope="col">Fecha</th><th scope="col">Animal</th><th scope="col">Diagnóstico</th><th scope="col">Salud</th><th scope="col">Medicamentos</th><th scope="col">Veterinario</th></tr></thead>
+        <thead><tr><th scope="col">Fecha</th><th scope="col">Animal</th><th scope="col">Diagnóstico</th><th scope="col">Salud</th><th scope="col">Medicamentos</th><th scope="col">Veterinario</th><th scope="col">Constancia</th></tr></thead>
         <tbody><tr th:each="at : ${atenciones}">
             <td class="fecha" th:text="${#temporals.format(at.fechaAtencion, 'dd/MM/yyyy HH:mm')}"></td>
             <td><a class="nombre-animal" th:href="@{/animales/{id}(id=${at.animal.idAnimal})}" th:text="${at.animal.nombre}"></a><span class="especie" th:text="|${at.animal.codigo} · ${at.animal.especie.nombreComun}|"></span></td>
@@ -38,6 +38,7 @@
                 <ul th:unless="${#lists.isEmpty(at.detalles)}" class="lista-medicamentos"><li th:each="d : ${at.detalles}" th:text="|${d.medicamento.nombre}: ${#numbers.formatDecimal(d.cantidad, 1, 'COMMA', 2, 'POINT')} ${d.medicamento.unidadMedida}|"></li></ul>
             </td>
             <td th:text="${at.veterinario.fullName}"></td>
+            <td><a class="boton" th:href="@{/atenciones/{id}/pdf(id=${at.idAtencion})}" target="_blank">PDF</a></td>
         </tr></tbody>
     </table></div>
 </main>
